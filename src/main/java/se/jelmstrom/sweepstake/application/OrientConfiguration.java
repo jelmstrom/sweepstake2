@@ -8,9 +8,9 @@ public class OrientConfiguration extends Configuration {
     @JsonProperty
     public String dbUrl = "remote:192.168.59.103/vmtips";
     @JsonProperty
-    public String userName = "root";
+    public String userName = "test";
     @JsonProperty
-    public String pwd = "toma2000";
+    public String pwd = "testpwd";
     @JsonProperty
     public int poolSize = 10;
 
