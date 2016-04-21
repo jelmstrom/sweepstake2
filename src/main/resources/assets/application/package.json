@@ -1,0 +1,31 @@
+{
+  "name": "sweepstake",
+  "version": "1.0.0",
+  "description": "Frontend for sweepstake",
+  "main": "index.js",
+  "scripts": {
+    "start": "live-server --open=."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jelmstrom/sweepstake.git"
+  },
+  "keywords": [],
+  "author": "jelmstrom",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jelmstrom/sweepstake/issues"
+  },
+  "homepage": "https://github.com/jelmstrom/sweepstake",
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.1.4",
+    "riot" : "2.3.15",
+    "datatables.net": "1.10.11",
+    "datatables.net-bs": "1.10.11",
+    "jquery-storage-api": "1.8.1"
+  },
+  "devDependencies": {
+    "live-server": "^0.8.2"
+  }
+}

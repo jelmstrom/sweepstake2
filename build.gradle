@@ -1,0 +1,118 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'eclipse'
+    id 'idea'
+    id 'net.researchgate.release' version '2.3.4'
+}
+
+
+//Project-wide properties
+sourceCompatibility = 1.8
+
+compileJava {
+    options.encoding = 'UTF-8';
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8';
+}
+
+group = 'se.jelmstrom.sweepstake'
+
+project.ext {
+    dropwizardVersion = '0.9.2'
+    serviceName = rootProject.name
+    zipTarget = "build/target/"
+    serviceRootPath = zipTarget + serviceName
+    mainClass = 'se.jelmstrom.sweepstake.application.SweepstakeMain'
+    prodPath = '.'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+//Build executable jar if the mainClass attribute is set
+jar.doFirst {
+    if (project.hasProperty('mainClass')) {
+        manifest {
+            def manifestClasspath = configurations.runtime.collect { './lib/'+it.getName() }.join(' ')
+            attributes('Class-Path': manifestClasspath, 'Main-class': mainClass)
+        }
+    }
+}
+
+jar {
+    from "gradle.properties"
+}
+
+task copyJars(type: Copy) {
+    dependsOn 'jar'
+    from configurations.runtime {}
+    into serviceRootPath + '/dist/lib'
+}
+
+task copyMainJar(type: Copy) {
+    dependsOn 'copyJars'
+    from jar.destinationDir
+    into serviceRootPath + '/dist'
+}
+
+task dist(type: Tar) {
+    println "Building dist for " + rootProject.name + " version " + version
+    dependsOn 'copyMainJar', 'clean'
+    compression = Compression.GZIP
+    from zipTarget
+}
+
+artifacts {
+    archives dist
+}
+
+
+configurations {
+    provided
+
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 20, 'seconds'
+
+}
+
+//Include provided for compilation
+sourceSets.main.compileClasspath += configurations.provided
+sourceSets.test.compileClasspath += configurations.provided
+
+dependencies {
+    compile group: 'io.dropwizard', name: 'dropwizard-core', version: dropwizardVersion
+    compile group: 'io.dropwizard', name: 'dropwizard-client', version: dropwizardVersion
+    compile group: 'io.dropwizard', name: 'dropwizard-assets', version: dropwizardVersion
+    compile group: 'io.dropwizard', name: 'dropwizard-forms', version: dropwizardVersion
+    compile group: 'io.dropwizard', name: 'dropwizard-auth', version: dropwizardVersion
+
+    compile group: 'io.swagger', name: 'swagger-jersey2-jaxrs', version: '1.5.3'
+    compile 'com.orientechnologies:orientdb-core:2.1.15'
+    compile 'com.orientechnologies:orientdb-graphdb:2.1.15'
+    compile 'com.orientechnologies:orientdb-client:2.1.15'
+
+    testCompile('junit:junit:4.12'){
+        exclude group:'org.hamcrest'
+    }
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testCompile group: 'org.glassfish.jersey.test-framework.providers', name: 'jersey-test-framework-provider-grizzly2', version: '2.22.1'
+    testCompile('io.dropwizard:dropwizard-testing:0.9.2'){
+        exclude group:'org.mockito'
+        exclude group:'junit'
+        exclude group:'org.hamcrest'
+
+    }
+    //using mockito-all breaks hamcrest
+    testCompile('org.mockito:mockito-core:2.0.2-beta'){
+        exclude group:'junit'
+        exclude group:'org.hamcrest'
+    }
+
+}
