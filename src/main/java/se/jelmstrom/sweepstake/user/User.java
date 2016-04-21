@@ -1,6 +1,5 @@
 package se.jelmstrom.sweepstake.user;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,12 +18,12 @@ public class User implements Principal{
     @NotNull
     public final String username;
     @JsonProperty
-    @NotNull
     public final String email;
     @JsonProperty
     public final String userId;
-    public final boolean isAdmin;
+    @JsonProperty
     public final String password;
+    public final boolean isAdmin;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     protected User() {

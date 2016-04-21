@@ -13,7 +13,6 @@ import se.jelmstrom.sweepstake.user.UserRepository;
 import se.jelmstrom.sweepstake.user.UserResource;
 
 import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
 import javax.servlet.FilterRegistration.Dynamic;
 import java.util.EnumSet;
 
@@ -29,7 +28,7 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
 
         Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
-        filter.setInitParameter("allowedOrigins", "http://localhost:63342");
+        filter.setInitParameter("allowedOrigins", "http://localhost:63343");
         filter.setInitParameter("allowedHeaders", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,Access-Control-Request-Method,Access-Control-Allow-Origin");
         filter.setInitParameter("allowedMethods", "GET,PUT,POST,DELETE,OPTIONS");
         filter.setInitParameter("preflightMaxAge", "5184000"); // 2 months

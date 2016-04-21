@@ -10,7 +10,8 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Path("/user")
 @Produces(MediaType.APPLICATION_JSON)
@@ -52,13 +53,27 @@ public class UserResource {
     }
 
 
+    @POST
+    @Path("/login")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response login(@Valid User user){
+        User authenticated = userRepo.authenticateUser(user.username, user.password);
+        if(authenticated.userId != null) {
+            return Response.ok(authenticated).build();
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+    }
+
     @RolesAllowed("USER")
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("id") String userId){
-        User users = userRepo.getUserById(userId);
-        return Response.ok(users).build();
+        User user = userRepo.getUserById(userId);
+        return Response.ok(user).build();
     }
 
 }

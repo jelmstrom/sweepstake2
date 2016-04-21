@@ -15,16 +15,13 @@ import se.jelmstrom.sweepstake.application.authenticator.UserAuthorizer;
 import se.jelmstrom.sweepstake.orient.OrientClient;
 
 import javax.ws.rs.core.Response;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashSet;
 
-import static javax.ws.rs.client.Entity.*;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static javax.ws.rs.client.Entity.json;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 
@@ -79,13 +76,7 @@ public class UserResourceTest {
 
     @Test
     public void testRegisterUser() throws Exception {
-        User user = new User("johane", "johan@email.com", "1", "aPassword");
-
-        Response post = resources.client().target("/user")
-                .request()
-                .post(json(user));
-
-        assertThat(post.getStatus(), is(Response.Status.OK.getStatusCode()));
+        User user = createUser();
 
     }
 
@@ -176,13 +167,7 @@ public class UserResourceTest {
 
     @Test
     public void shouldBlockAccessIfAuthIsIncorrect() {
-        User user = new User("johane", "johan@email.com", "1", "aPassword");
-
-        Response post = resources.client().target("/user")
-                .request()
-                .post(json(user));
-
-        assertThat(post.getStatus(), is(Response.Status.OK.getStatusCode()));
+        User user = createUser();
         HashSet<User> users = userRepo.findUsers(user);
 
         Response response = resources.client().target("/user/"+users.iterator().next().userId)
@@ -195,13 +180,7 @@ public class UserResourceTest {
 
     @Test
     public void shouldAllowAccessIfAuthIsCorrect() {
-        User user = new User("johane", "johan@email.com", "1", "aPassword");
-
-        Response post = resources.client().target("/user")
-                .request()
-                .post(json(user));
-
-        assertThat(post.getStatus(), is(Response.Status.OK.getStatusCode()));
+        User user = createUser();
         HashSet<User> users = userRepo.findUsers(user);
 
         Response response = resources.client().target("/user/"+users.iterator().next().userId)
@@ -210,5 +189,33 @@ public class UserResourceTest {
                 .get();
 
         assertThat(response.getStatus(), is(200));
+    }
+
+    @Test
+    public void loginReturnsUser() throws IOException {
+        User user = createUser();
+        HashSet<User> users = userRepo.findUsers(user);
+
+        Response response = resources.client().target("/user/login")
+                .request()
+                .post(json(user));
+
+        assertThat(response.getStatus(), is(200));
+        ByteArrayInputStream entity = (ByteArrayInputStream) response.getEntity();
+
+        String bodyContent = getEntityAsString(entity);
+        assertThat(bodyContent, containsString("\"email\""));
+        assertThat(bodyContent, containsString("\"username\""));
+    }
+
+    private User createUser() {
+        User user = new User("johane", "johan@email.com", "1", "aPassword");
+
+        Response post = resources.client().target("/user")
+                .request()
+                .post(json(user));
+
+        assertThat(post.getStatus(), is(Response.Status.OK.getStatusCode()));
+        return user;
     }
 }

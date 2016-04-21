@@ -15,12 +15,18 @@ var main = {
             if(main.dev){
                 url = 'http://localhost:8081'+url
             }
+            var userName;
+            if(main.session.get("user")){
+                userName=main.session.get("user").username;
+            }
             $.ajax({
             headers: {
                     'Content-Type': 'application/json'
                 },
                 type: type,
                 cache: "false",
+                username: userName,
+                password: main.session.get("password"),
                 url: url,
                 data: msgBody,
                 async: true,
@@ -43,7 +49,7 @@ var menu = {
     },
     userLoggedIn : function() {
         $("#menu-user").show();
-        $("#label-user-name").text(main.session.get("user").username);
+        $("#p-user").text(main.session.get("user").username);
         $("#menu-register").hide();
     },
     init : function(){
@@ -56,6 +62,9 @@ var menu = {
             });
 
         $("#menu-logout").on("click", function() {
+
+            main.session.set("password", null);
+            main.session.set("user", null);
            menu.userLoggedOut();
         });
     }

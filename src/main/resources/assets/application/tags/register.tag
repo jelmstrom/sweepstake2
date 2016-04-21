@@ -51,16 +51,39 @@
                 $("#div-user-register").show();
         });
 
+        $("#btn-login-user").on("click", function(event) {
+            event.preventDefault();
+            var user = {
+                username : $("#login-username").val(),
+                password : $("#login-password").val(),
+            };
+            console.log(user)
+            main.makeAjaxCall('/rest/user/login', 'POST', user)
+                    .done(function(response){
+                        main.session.set("user", response);
+                        main.session.set("password", user.password);
+                        $("#tag-register").hide();
+                        menu.userLoggedIn();
+                    }).fail(function(response){
+                console.log(response);
+                //update an alert tag and pop it up?
+                //set an error label? <- probably neater..
+            });
+        });
+
+
         $("#btn-new-user").on("click", function(event) {
             event.preventDefault();
             var user = {
                 username : $("#username").val(),
                 email : $("#email").val(),
+                password : $("#password").val(),
             };
             console.log(user)
             main.makeAjaxCall('/rest/user', 'POST', user)
                 .done(function(response){
                     main.session.set("user", response);
+                    main.session.set("password", user.password);
                     $("#tag-register").hide();
                     menu.userLoggedIn();
                 }).fail(function(response){
