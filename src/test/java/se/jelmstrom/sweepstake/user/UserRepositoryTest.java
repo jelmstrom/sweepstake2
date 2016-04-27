@@ -9,7 +9,7 @@ import se.jelmstrom.sweepstake.orient.OrientClient;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 
 public class UserRepositoryTest {
@@ -31,12 +31,12 @@ public class UserRepositoryTest {
 
     @After
     public void tearDown(){
-        assertThat(repo.deleteUser(user.userId), is(true));
+        assertThat(repo.deleteUser(user.getUserId()), is(true));
         assertThat(repo.findUsers(user).size(), is(0));
     }
     @Test
     public void testSaveUser() throws Exception {
-        assertThat(repo.getUserById(user.userId), is(equalTo(user)));
+        assertThat(repo.getUserById(user.getUserId()), is(equalTo(user)));
 
     }
 

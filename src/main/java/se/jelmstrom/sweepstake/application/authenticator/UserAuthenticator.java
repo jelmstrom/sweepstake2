@@ -1,7 +1,9 @@
 package se.jelmstrom.sweepstake.application.authenticator;
 
 import com.google.common.base.Optional;
-import io.dropwizard.auth.*;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthenticationException;
+import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.setup.Environment;
@@ -11,7 +13,6 @@ import se.jelmstrom.sweepstake.user.User;
 import se.jelmstrom.sweepstake.user.UserRepository;
 
 import java.security.Principal;
-import java.util.HashSet;
 
 public class UserAuthenticator implements Authenticator<BasicCredentials, Principal> {
     private final UserRepository userRepo;
@@ -26,7 +27,7 @@ public class UserAuthenticator implements Authenticator<BasicCredentials, Princi
 
 
         User user = userRepo.authenticateUser(credentials.getUsername(), credentials.getPassword());
-        if(user.userId != null){
+        if(user.getUserId() != null){
             return Optional.of(user);
         }
         return Optional.absent();

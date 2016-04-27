@@ -1,3 +1,4 @@
+<!--suppress ThisExpressionReferencesGlobalObjectJS -->
 <register>
 <div id="div-register">
     <div class="row centered-form login">
@@ -55,9 +56,9 @@
             event.preventDefault();
             var user = {
                 username : $("#login-username").val(),
-                password : $("#login-password").val(),
+                password : $("#login-password").val()
             };
-            console.log(user)
+            console.log(user);
             main.makeAjaxCall('/rest/user/login', 'POST', user)
                     .done(function(response){
                         main.session.set("user", response);
@@ -77,9 +78,9 @@
             var user = {
                 username : $("#username").val(),
                 email : $("#email").val(),
-                password : $("#password").val(),
+                password : $("#password").val()
             };
-            console.log(user)
+            console.log(user);
             main.makeAjaxCall('/rest/user', 'POST', user)
                 .done(function(response){
                     main.session.set("user", response);

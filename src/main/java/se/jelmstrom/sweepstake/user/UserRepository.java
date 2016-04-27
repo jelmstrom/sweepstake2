@@ -1,6 +1,5 @@
 package se.jelmstrom.sweepstake.user;
 
-import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.Compare;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
@@ -25,9 +24,9 @@ public class UserRepository {
         OrientVertex orientVertex = null;
         try {
             orientVertex = graph.addVertex("class:User"
-                    , "username", user.username
-                    , "email", user.email
-                    , "password", encryptPassword(user.password));
+                    , "username", user.getUsername()
+                    , "email", user.getEmail()
+                    , "password", encryptPassword(user.getPassword()));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Incorrect encryption algorithm");
         }
@@ -39,8 +38,8 @@ public class UserRepository {
 
         OrientGraphNoTx graph = oClient.factory.getNoTx();
         HashSet<User> users = new HashSet<>();
-        Iterable<Vertex> username = graph.query().has("username", Compare.EQUAL, user.username).vertices();
-        Iterable<Vertex> email = graph.query().has("email", Compare.EQUAL, user.email).vertices();
+        Iterable<Vertex> username = graph.query().has("username", Compare.EQUAL, user.getUsername()).vertices();
+        Iterable<Vertex> email = graph.query().has("email", Compare.EQUAL, user.getEmail()).vertices();
         graph.commit();
 
         username.iterator().forEachRemaining(vert -> users.add(buildUser(vert)));

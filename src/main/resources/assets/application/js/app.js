@@ -4,6 +4,10 @@ var main = {
     session : null,
     hideAllTags : function (){
         $("#tag-register").hide();
+        $("#tag-user").hide();
+    },
+    user : function(){
+        return main.session.get("user");
     },
 
     makeAjaxCall : function (url, type, data) {
@@ -33,12 +37,12 @@ var main = {
                 success: function (response) {
                     deferredObject.resolve(response);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                error: function (jqXHR) {
                     deferredObject.reject(jqXHR);
                 }
             });
             return deferredObject.promise();
-        },
+        }
 };
 
 var menu = {
@@ -66,6 +70,14 @@ var menu = {
             main.session.set("password", null);
             main.session.set("user", null);
            menu.userLoggedOut();
+        });
+        $("#menu-details").on("click", function() {
+            main.hideAllTags();
+
+            $("#userinfo-email").text(main.user().email);
+            $("#userinfo-isadmin").text(main.user().isAdmin);
+            $("#userinfo-username").text(main.user().username);
+            $("#tag-user").show();
         });
     }
 };

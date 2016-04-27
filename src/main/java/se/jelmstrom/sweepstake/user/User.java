@@ -12,26 +12,21 @@ import javax.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements Principal{
     @JsonProperty
     @NotNull
-    public final String username;
+    private String username;
     @JsonProperty
-    public final String email;
+    private String email;
     @JsonProperty
-    public final String userId;
+    private String userId;
     @JsonProperty
-    public final String password;
-    public final boolean isAdmin;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private String password;
+    private boolean isAdmin;
 
-    protected User() {
-        username=null;
-        email=null;
-        userId = null;
-        isAdmin = false;
-        password = null;
+    public User() {
     }
 
     public User(String username, String email, String userId, String password) {
@@ -54,7 +49,7 @@ public class User implements Principal{
     @Override
     public String toString() {
         try {
-            return objectMapper.writeValueAsString(this);
+            return new ObjectMapper().writeValueAsString(this);
         } catch (JsonProcessingException e) {
             return new ToStringBuilder(this)
                     .append("username :", username)
@@ -62,6 +57,7 @@ public class User implements Principal{
                     .append("userId", userId)
                     .toString();
         }
+
     }
 
     @Override
@@ -90,5 +86,39 @@ public class User implements Principal{
         return isAdmin? Arrays.asList("ADMIN", "USER"):Arrays.asList("USER");
     }
 
+    public String getUsername() {
+        return username;
+    }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
 }

@@ -29,6 +29,9 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerUser(@Valid User user){
         logger.info(user.toString());
+        if(user.getEmail() == null){
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         HashSet<User> conflictingUsers = userRepo.findUsers(user);
 
         logger.info(conflictingUsers.toString());
@@ -38,10 +41,10 @@ public class UserResource {
         } else {
             Set<String> conflictingFields = new HashSet<>();
             conflictingUsers.stream().forEach(conflictUser -> {
-                if(StringUtils.equals(user.email, conflictUser.email)){
+                if(StringUtils.equals(user.getEmail(), conflictUser.getEmail())){
                     conflictingFields.add("email");
                 }
-                if(StringUtils.equals(user.username, conflictUser.username)){
+                if(StringUtils.equals(user.getUsername(), conflictUser.getUsername())){
                     conflictingFields.add("username");
                 }
             });
@@ -58,8 +61,8 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response login(@Valid User user){
-        User authenticated = userRepo.authenticateUser(user.username, user.password);
-        if(authenticated.userId != null) {
+        User authenticated = userRepo.authenticateUser(user.getUsername(), user.getPassword());
+        if(authenticated.getUserId() != null) {
             return Response.ok(authenticated).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();

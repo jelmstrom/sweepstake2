@@ -88,7 +88,7 @@ public class UserResourceTest {
                 .request()
                 .post(json(user));
 
-        assertThat(post.getStatus(), is(422));
+        assertThat(post.getStatus(), is(400));
 
     }
 
@@ -170,7 +170,7 @@ public class UserResourceTest {
         User user = createUser();
         HashSet<User> users = userRepo.findUsers(user);
 
-        Response response = resources.client().target("/user/"+users.iterator().next().userId)
+        Response response = resources.client().target("/user/"+users.iterator().next().getUserId())
                 .request()
                 .header("Authorization", "Basic ZZ9oYW5lOmFQYXNzd29yZAZZ")
                 .get();
@@ -183,7 +183,7 @@ public class UserResourceTest {
         User user = createUser();
         HashSet<User> users = userRepo.findUsers(user);
 
-        Response response = resources.client().target("/user/"+users.iterator().next().userId)
+        Response response = resources.client().target("/user/"+users.iterator().next().getUserId())
                 .request()
                 .header("Authorization", "Basic am9oYW5lOmFQYXNzd29yZA==")
                 .get();

@@ -5,3 +5,8 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+.background-padding {
+    pading-left: 10px,;
+    padding-right: 10px;
+}
