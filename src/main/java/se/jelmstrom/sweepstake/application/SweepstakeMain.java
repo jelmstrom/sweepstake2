@@ -7,9 +7,9 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
-import se.jelmstrom.sweepstake.orient.OrientClient;
-import se.jelmstrom.sweepstake.orient.OrientHealthCheck;
-import se.jelmstrom.sweepstake.user.UserRepository;
+import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
+import se.jelmstrom.sweepstake.neo4j.NeoConfigHealthCheck;
+import se.jelmstrom.sweepstake.user.NeoUserRepository;
 import se.jelmstrom.sweepstake.user.UserResource;
 
 import javax.servlet.DispatcherType;
@@ -20,11 +20,12 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
     @Override
     public void run(SweepstakeConfiguration config, Environment environment) throws Exception {
 
-        OrientClient orientClient = new OrientClient(config);
-        environment.lifecycle().manage(orientClient);
-        UserRepository userRepo = new UserRepository(orientClient);
-        environment.jersey().register(new UserResource(userRepo));
-        environment.healthChecks().register("database", new OrientHealthCheck(orientClient));
+        Neo4jClient neo4jClient = new Neo4jClient(config.getNeoConfiguration());
+        environment.lifecycle().manage(neo4jClient);
+
+        NeoUserRepository neoRepo = new NeoUserRepository(neo4jClient);
+        environment.jersey().register(new UserResource(neoRepo));
+
 
         Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
@@ -34,7 +35,8 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
         filter.setInitParameter("preflightMaxAge", "5184000"); // 2 months
         filter.setInitParameter("allowCredentials", "true");
 
-        UserAuthenticator.register(environment, config, userRepo);
+        UserAuthenticator.register(environment, config, neoRepo);
+        environment.healthChecks().register("neo4j", new NeoConfigHealthCheck(neo4jClient));
     }
 
 

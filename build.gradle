@@ -78,8 +78,10 @@ configurations {
 }
 
 configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 20, 'seconds'
-
+    resolutionStrategy {
+        cacheChangingModulesFor 20, 'seconds'
+        force 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
+    }
 }
 
 //Include provided for compilation
@@ -94,9 +96,10 @@ dependencies {
     compile group: 'io.dropwizard', name: 'dropwizard-auth', version: dropwizardVersion
 
     compile group: 'io.swagger', name: 'swagger-jersey2-jaxrs', version: '1.5.3'
-    compile 'com.orientechnologies:orientdb-core:2.1.15'
-    compile 'com.orientechnologies:orientdb-graphdb:2.1.15'
-    compile 'com.orientechnologies:orientdb-client:2.1.15'
+
+    compile 'org.neo4j:neo4j-ogm-core:2.0.1'
+    compile 'org.neo4j:neo4j-ogm-http-driver:2.0.1'
+    compile 'org.neo4j:neo4j-ogm-embedded-driver:2.0.1'
 
     testCompile('junit:junit:4.12'){
         exclude group:'org.hamcrest'

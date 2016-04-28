@@ -19,9 +19,9 @@ import java.util.Set;
 public class UserResource {
 
     Logger logger = LoggerFactory.getLogger(UserResource.class);
-    private final UserRepository userRepo;
+    private final NeoUserRepository userRepo;
 
-    public UserResource(UserRepository userRepo) {
+    public UserResource(NeoUserRepository userRepo) {
         this.userRepo = userRepo;
     }
 
@@ -32,7 +32,7 @@ public class UserResource {
         if(user.getEmail() == null){
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        HashSet<User> conflictingUsers = userRepo.findUsers(user);
+        Set<User> conflictingUsers = userRepo.findUsers(user);
 
         logger.info(conflictingUsers.toString());
         if(conflictingUsers.isEmpty()){

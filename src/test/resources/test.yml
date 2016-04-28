@@ -6,3 +6,7 @@ server:
     - type: http
       port: 8999
   rootPath: '/rest/*'
+neoConfiguration:
+  credentials: 'local'
+  user: 'neo4j'
+  location: '192.168.59.103:7474'

@@ -7,16 +7,12 @@ public class SweepstakeConfiguration extends Configuration {
 
     public String version = "1.0.0";
     @JsonProperty
-    private OrientConfiguration orientConfig= new OrientConfiguration();
+    private NeoConfiguration neoConfiguration= new NeoConfiguration();
 
     public SweepstakeConfiguration() {
     }
 
-    public SweepstakeConfiguration(OrientConfiguration orientConfig) {
-        this.orientConfig = orientConfig;
-    }
-
-    public OrientConfiguration getOrientConfig() {
-        return orientConfig;
+    public NeoConfiguration getNeoConfiguration() {
+        return neoConfiguration;
     }
 }

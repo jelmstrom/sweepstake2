@@ -1,6 +1,5 @@
 package se.jelmstrom.sweepstake.user;
 
-import com.orientechnologies.orient.core.sql.OCommandSQL;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
@@ -8,43 +7,43 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.junit.*;
-import se.jelmstrom.sweepstake.application.OrientConfiguration;
-import se.jelmstrom.sweepstake.application.SweepstakeConfiguration;
+import se.jelmstrom.sweepstake.application.NeoConfiguration;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthorizer;
-import se.jelmstrom.sweepstake.orient.OrientClient;
+import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.HashSet;
+import java.util.Set;
 
 import static javax.ws.rs.client.Entity.json;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 
+
 public class UserResourceTest {
 
-    public static final OrientConfiguration ORIENT_CONFIG = new OrientConfiguration(
-            "remote:192.168.59.103/vmtipstest"
-            , "test"
-            , "testpwd"
-            , 10
-    );
-    private static final OrientClient oClient = new OrientClient(new SweepstakeConfiguration(ORIENT_CONFIG));
-    private static final UserRepository userRepo = new UserRepository(oClient);
+
+    private static final NeoConfiguration config = new NeoConfiguration(
+            "192.168.59.103:7474"
+            , "local"
+            , "neo4j");
+    private static final Neo4jClient neoClient = new Neo4jClient(config);
+    private static final NeoUserRepository userRepo = new NeoUserRepository(neoClient);
+
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
-            .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<Principal>()
+            .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<>()
                     .setAuthenticator(new UserAuthenticator(userRepo))
                     .setAuthorizer(new UserAuthorizer())
                     .setRealm("vmtips")
                     .buildAuthFilter()))
             .addProvider(RolesAllowedDynamicFeature.class)
             .addProvider(new AuthValueFactoryProvider.Binder<>(Principal.class))
-            .addResource(new UserResource(new UserRepository(oClient)))
+            .addResource(new UserResource(new NeoUserRepository(neoClient)))
             .build();
 
 
@@ -52,7 +51,7 @@ public class UserResourceTest {
     public ResourceTestRule rule = ResourceTestRule
             .builder()
             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
-            .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<Principal>()
+            .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<>()
                     .setAuthenticator(new UserAuthenticator(userRepo))
                     .setAuthorizer(new UserAuthorizer())
                     .setRealm("vmtips")
@@ -65,13 +64,13 @@ public class UserResourceTest {
     @Before
     public void setUp() throws Exception {
 
-        oClient.start();
+        neoClient.start();
     }
 
     @After
     public void after() {
-        oClient.txGraph().command(new OCommandSQL("DELETE VERTEX User where username = 'johane'")).execute();
-        oClient.txGraph().commit();
+        Set<User> users = userRepo.findUsers(new User("test_user", "test_user@email.com",  null, ""));
+        users.forEach(user -> neoClient.session().delete(user));
     }
 
     @Test
@@ -82,7 +81,7 @@ public class UserResourceTest {
 
     @Test
     public void rejectsUserWithIncorrectEmail() throws Exception {
-        User user = new User("johane", null, "1");
+        User user = new User("johane", null,null);
 
         Response post = resources.client().target("/user")
                 .request()
@@ -94,8 +93,8 @@ public class UserResourceTest {
 
     @Test
     public void rejectsUserIfUsernameIsTaken() throws Exception {
-        User user = new User("johane", "johan@email.com", "1", "password");
-        User user2 = new User("johane", "johan.e@email.com", "1", "password");
+        User user = new User("test_user", "johan@email.com", null, "password");
+        User user2 = new User("test_user", "johan.e@email.com", null, "password");
 
         Response post = resources.client().target("/user")
                 .request()
@@ -122,8 +121,8 @@ public class UserResourceTest {
 
     @Test
     public void rejectsUserIfEmailIsTaken() throws Exception {
-        User user = new User("johane", "johan@email.com", "1", "password");
-        User user2 = new User("johan", "johan@email.com", "1", "password");
+        User user = new User("test_usere", "test_user@email.com", null, "password");
+        User user2 = new User("test_user", "test_user@email.com", null, "password");
 
         Response post = resources.client().target("/user")
                 .request()
@@ -144,8 +143,8 @@ public class UserResourceTest {
 
     @Test
     public void rejectsUserIfEmailAndUsernameIsTaken() throws Exception {
-        User user = new User("johane", "johan@email.com", "1", "password");
-        User user2 = new User("johane", "johan@email.com", "1", "password");
+        User user = new User("test_user", "test.user@email.com", null, "password");
+        User user2 = new User("test_user", "test.user@email.com", null, "password");
 
         Response post = resources.client().target("/user")
                 .request()
@@ -168,7 +167,7 @@ public class UserResourceTest {
     @Test
     public void shouldBlockAccessIfAuthIsIncorrect() {
         User user = createUser();
-        HashSet<User> users = userRepo.findUsers(user);
+        Set<User> users = userRepo.findUsers(user);
 
         Response response = resources.client().target("/user/"+users.iterator().next().getUserId())
                 .request()
@@ -181,11 +180,11 @@ public class UserResourceTest {
     @Test
     public void shouldAllowAccessIfAuthIsCorrect() {
         User user = createUser();
-        HashSet<User> users = userRepo.findUsers(user);
+        Set<User> users = userRepo.findUsers(user);
 
         Response response = resources.client().target("/user/"+users.iterator().next().getUserId())
                 .request()
-                .header("Authorization", "Basic am9oYW5lOmFQYXNzd29yZA==")
+                .header("Authorization", "Basic dGVzdF91c2VyOmFQYXNzd29yZA")
                 .get();
 
         assertThat(response.getStatus(), is(200));
@@ -194,7 +193,7 @@ public class UserResourceTest {
     @Test
     public void loginReturnsUser() throws IOException {
         User user = createUser();
-        HashSet<User> users = userRepo.findUsers(user);
+        Set<User> users = userRepo.findUsers(user);
 
         Response response = resources.client().target("/user/login")
                 .request()
@@ -209,7 +208,7 @@ public class UserResourceTest {
     }
 
     private User createUser() {
-        User user = new User("johane", "johan@email.com", "1", "aPassword");
+        User user = new User("test_user", "test_user@email.com", null, "aPassword");
 
         Response post = resources.client().target("/user")
                 .request()
