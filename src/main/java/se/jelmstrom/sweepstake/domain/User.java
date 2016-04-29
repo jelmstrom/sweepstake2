@@ -1,11 +1,12 @@
 package se.jelmstrom.sweepstake.domain;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.Relationship;
 
 import javax.validation.constraints.NotNull;
@@ -16,12 +17,8 @@ import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class User implements Principal{
+public class User extends Entity implements Principal{
 
-    @GraphId
-    @JsonProperty
-    private Long id;
     @JsonProperty
     @NotNull
     private String username;
@@ -29,7 +26,6 @@ public class User implements Principal{
     private String email;
     @JsonProperty
     private String password;
-    @JsonProperty
     private boolean isAdmin;
     @JsonProperty
     @Relationship(type= "PREDICTON", direction= Relationship.OUTGOING)

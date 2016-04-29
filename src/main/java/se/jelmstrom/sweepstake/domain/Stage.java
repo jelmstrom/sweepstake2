@@ -1,17 +1,13 @@
 package se.jelmstrom.sweepstake.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Set;
 
 @NodeEntity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Stage {
+public class Stage extends Entity{
 
 
     public enum CompetitionStage {
@@ -36,9 +32,6 @@ public class Stage {
             return label;
         }
     }
-
-    @GraphId
-    private Long id;
 
     @JsonProperty
     private CompetitionStage stage;

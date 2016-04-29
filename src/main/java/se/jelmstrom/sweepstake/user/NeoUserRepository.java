@@ -2,6 +2,7 @@ package se.jelmstrom.sweepstake.user;
 
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.transaction.Transaction;
+import se.jelmstrom.sweepstake.domain.League;
 import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 
@@ -26,7 +27,7 @@ public class NeoUserRepository {
         Transaction transaction = session.beginTransaction();
         try {
             user.setPassword(encryptPassword(user.getPassword()));
-            session.save(user);
+            session.save(user, 1);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("can not encrypt passwords to store in DB");
         }
@@ -77,5 +78,15 @@ public class NeoUserRepository {
 
     private String encryptPassword(String password) throws NoSuchAlgorithmException {
         return password;
+    }
+
+    public League getLeague(String leagueName) {
+        Map<String, String> parameters = new HashMap();
+        parameters.put("leagueName", leagueName);
+        League league = oClient.session().queryForObject(
+                League.class
+                , "MATCH (u:League) where u.leagueName = {leagueName} RETURN u"
+                , parameters);
+        return league == null?new League():oClient.session().load(League.class, league.getId(), 1);
     }
 }

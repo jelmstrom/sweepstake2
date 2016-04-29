@@ -18,6 +18,7 @@ import se.jelmstrom.sweepstake.user.NeoUserRepository;
 
 import javax.ws.rs.core.Response;
 import java.security.Principal;
+import java.util.HashSet;
 
 import static javax.ws.rs.client.Entity.json;
 import static org.hamcrest.CoreMatchers.is;
@@ -61,6 +62,22 @@ public class LeagueResourceTest {
         userRepo.saveUser(user);
 
         Response response = resources.client().target("/league/test")
+                .request()
+                .header("Authorization", "Basic dGVzdF91c2VyOmFQYXNzd29yZA")
+                .post(json(user));
+        assertThat(response.getStatus(), is(200));
+        assertThat(userRepo.getUserById(user.getId()).getLeagues().size(), is(1));
+
+    }
+
+    @Test
+    public void joinLeagueAddsToUsersLeagues(){
+        user = new User("test_user", "test_user@email.com", null, "aPassword");
+        userRepo.saveUser(user);
+        League league = new League(new HashSet<>(), "TestLeague");
+        neoClient.session().save(league);
+
+        Response response = resources.client().target("/league/TestLeague/join")
                 .request()
                 .header("Authorization", "Basic dGVzdF91c2VyOmFQYXNzd29yZA")
                 .post(json(user));

@@ -1,10 +1,7 @@
 package se.jelmstrom.sweepstake.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.DateLong;
 
@@ -12,11 +9,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Match {
-    @GraphId
-    @JsonProperty
-    private Long id;
+public class Match extends Entity{
     @JsonProperty
     private String home;
     @JsonProperty

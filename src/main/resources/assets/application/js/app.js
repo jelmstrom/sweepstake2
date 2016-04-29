@@ -9,6 +9,12 @@ var main = {
     user : function(){
         return main.session.get("user");
     },
+    hideAlerts : function(){
+        $("#alert-info").hide();
+        $("#alert-warning").hide();
+        $("#alert-fail").hide();
+
+    },
 
     makeAjaxCall : function (url, type, data) {
             var deferredObject = $.Deferred();
@@ -40,12 +46,12 @@ var main = {
                         xhr.setRequestHeader("Authorization", "Basic " + btoa(userName + ":" + main.session.get("password")));
                     }
                 },
-
                 success: function (response) {
                     deferredObject.resolve(response);
                 },
                 error: function (jqXHR) {
                     deferredObject.reject(jqXHR);
+
                 }
             });
             return deferredObject.promise();
@@ -84,12 +90,41 @@ var menu = {
             main.hideAllTags();
 
             $("#userinfo-email").text(main.user().email);
-            $("#userinfo-isadmin").text(main.user().isAdmin);
+            $("#userinfo-isadmin").text(main.user().admin);
             $("#userinfo-username").text(main.user().username);
-            var leagues = $('#userinfo-league-table').DataTable();
-            leagues.data().draw();
-            
+            user.drawLeagueTable();
             $("#tag-user").show();
+        });
+    }
+};
+var user = {
+    drawLeagueTable: function () {
+        var userLeagues = [];
+        if (main.user()) {
+            userLeagues = main.user().leagues;
+        }
+        console.log("draw table");
+        console.log(userLeagues);
+        console.log(main.user());
+        var jQuery = $('#userinfo-league-table').DataTable();
+        if (jQuery) {
+            jQuery.destroy();
+        }
+
+        var leagues = $('#userinfo-league-table').DataTable({
+            "responsive": true,
+            "paging": false,
+            "searching": false,
+            "info": false,
+            "ordering": false,
+            "aaData": userLeagues,
+            "columns": [
+                {"data": "leagueName"},
+                {"data": null}
+            ],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                return nRow;
+            },
         });
     }
 };
@@ -97,12 +132,12 @@ var menu = {
 
 $(document).ready(function() {
     main.hideAllTags();
+    main.hideAlerts();
     if(!main.session.get("user")){
         menu.userLoggedOut();
     } else {
         menu.userLoggedIn();
     }
-    $("#header").html("Sweepstake");
-    $("#tag-register").hide();
+
 
 });

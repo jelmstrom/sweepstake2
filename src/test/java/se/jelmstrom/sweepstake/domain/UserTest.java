@@ -16,11 +16,11 @@ public class UserTest {
     public void testToString() throws Exception {
         String toString = new User("johan", "johan@email.com", 9999L).toString();
         assertThat(toString, is(notNullValue()));
-        assertThat(toString, is(equalTo("{\"userId\":9999,\"username\":\"johan\",\"email\":\"johan@email.com\",\"predictions\":[],\"admin\":false}")));
+        assertThat(toString, is(equalTo("{\"id\":9999,\"username\":\"johan\",\"email\":\"johan@email.com\",\"predictions\":[],\"leagues\":[],\"admin\":false}")));
     }
 
     @Test
-    public void processJson() throws JsonProcessingException {
+    public void parseUserWithBidirectionalRelationships() throws JsonProcessingException {
         User user = new User("tst", "user", 1L, "pwd");
         League e = new League();
         e.getUsers().add(user);
