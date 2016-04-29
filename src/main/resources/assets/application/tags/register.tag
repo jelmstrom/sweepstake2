@@ -64,11 +64,12 @@
                         main.session.set("user", response);
                         main.session.set("password", user.password);
                         $("#tag-register").hide();
+                        console.log(response);
                         menu.userLoggedIn();
                     }).fail(function(response){
-                console.log(response);
-                //update an alert tag and pop it up?
-                //set an error label? <- probably neater..
+                        console.log(response);
+                        //update an alert tag and pop it up?
+                        //set an error label? <- probably neater..
             });
         });
 

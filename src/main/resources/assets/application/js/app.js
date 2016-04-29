@@ -34,6 +34,13 @@ var main = {
                 url: url,
                 data: msgBody,
                 async: true,
+                beforeSend: function (xhr) {
+                    if(main.session.get("password")) {
+                        console.log("basic header");
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(userName + ":" + main.session.get("password")));
+                    }
+                },
+
                 success: function (response) {
                     deferredObject.resolve(response);
                 },
@@ -69,7 +76,9 @@ var menu = {
 
             main.session.set("password", null);
             main.session.set("user", null);
-           menu.userLoggedOut();
+            menu.userLoggedOut();
+            var leagues = $('#userinfo-league-table').DataTable();
+            leagues.data().clear();
         });
         $("#menu-details").on("click", function() {
             main.hideAllTags();
@@ -77,6 +86,9 @@ var menu = {
             $("#userinfo-email").text(main.user().email);
             $("#userinfo-isadmin").text(main.user().isAdmin);
             $("#userinfo-username").text(main.user().username);
+            var leagues = $('#userinfo-league-table').DataTable();
+            leagues.data().draw();
+            
             $("#tag-user").show();
         });
     }

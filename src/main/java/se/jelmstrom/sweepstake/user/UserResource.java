@@ -63,7 +63,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response login(@Valid User user){
         User authenticated = userRepo.authenticateUser(user.getUsername(), user.getPassword());
-        if(authenticated.getUserId() != null) {
+        if(authenticated.getId() != null) {
             return Response.ok(authenticated).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();

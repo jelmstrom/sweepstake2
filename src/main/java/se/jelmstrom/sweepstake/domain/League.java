@@ -1,6 +1,8 @@
 package se.jelmstrom.sweepstake.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
@@ -9,14 +11,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NodeEntity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class League {
     @GraphId
     private Long id;
     @JsonProperty
+    private String leagueName;
     @Relationship(type= "LEAGUE", direction= Relationship.INCOMING)
     private Set<User> users  = new HashSet<>();
-    @JsonProperty
-    private String leagueName;
+
 
     public League() {
 

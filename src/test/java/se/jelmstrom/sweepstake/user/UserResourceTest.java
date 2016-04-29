@@ -156,7 +156,7 @@ public class UserResourceTest {
         User user = createUser();
         Set<User> users = userRepo.findUsers(user);
 
-        Response response = resources.client().target("/user/"+users.iterator().next().getUserId())
+        Response response = resources.client().target("/user/"+users.iterator().next().getId())
                 .request()
                 .header("Authorization", "Basic ZZ9oYW5lOmFQYXNzd29yZAZZ")
                 .get();
@@ -169,7 +169,7 @@ public class UserResourceTest {
         User user = createUser();
         Set<User> users = userRepo.findUsers(user);
 
-        Response response = resources.client().target("/user/"+users.iterator().next().getUserId())
+        Response response = resources.client().target("/user/"+users.iterator().next().getId())
                 .request()
                 .header("Authorization", "Basic dGVzdF91c2VyOmFQYXNzd29yZA")
                 .get();
@@ -203,7 +203,7 @@ public class UserResourceTest {
         user.getLeagues().add(league);
 
         userRepo.saveUser(user);
-        User userById = userRepo.getUserById(user.getUserId());
+        User userById = userRepo.getUserById(user.getId());
         assertThat(userById, is(notNullValue()));
         assertThat(userById.getLeagues().iterator().next(), is(notNullValue()));
 

@@ -27,7 +27,7 @@ public class UserAuthenticator implements Authenticator<BasicCredentials, Princi
 
 
         User user = userRepo.authenticateUser(credentials.getUsername(), credentials.getPassword());
-        if(user.getUserId() != null){
+        if(user.getId() != null){
             return Optional.of(user);
         }
         return Optional.absent();

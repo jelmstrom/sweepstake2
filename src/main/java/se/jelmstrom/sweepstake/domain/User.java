@@ -1,8 +1,6 @@
 package se.jelmstrom.sweepstake.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Objects;
@@ -18,11 +16,12 @@ import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User implements Principal{
 
     @GraphId
     @JsonProperty
-    private Long userId;
+    private Long id;
     @JsonProperty
     @NotNull
     private String username;
@@ -30,6 +29,7 @@ public class User implements Principal{
     private String email;
     @JsonProperty
     private String password;
+    @JsonProperty
     private boolean isAdmin;
     @JsonProperty
     @Relationship(type= "PREDICTON", direction= Relationship.OUTGOING)
@@ -42,18 +42,18 @@ public class User implements Principal{
     public User() {
     }
 
-    public User(String username, String email, Long userId, String password) {
+    public User(String username, String email, Long id, String password) {
         this.username = username;
         this.email = email;
         this.isAdmin= false;
         this.password = password;
-        this.userId = userId;
+        this.id = id;
     }
 
-    public User(String username, String email, Long userId) {
+    public User(String username, String email, Long id) {
         this.username = username;
         this.email = email;
-        this.userId = userId;
+        this.id = id;
         isAdmin = false;
         password = null;
     }
@@ -67,7 +67,7 @@ public class User implements Principal{
             return new ToStringBuilder(this)
                     .append("username :", username)
                     .append("email :", email)
-                    .append("userId", getUserId())
+                    .append("id", getId())
                     .toString();
         }
 
@@ -80,12 +80,12 @@ public class User implements Principal{
         User user = (User) o;
         return Objects.equal(username, user.username) &&
                 Objects.equal(email, user.email) &&
-                Objects.equal(getUserId(), user.getUserId());
+                Objects.equal(getId(), user.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(username, email, getUserId());
+        return Objects.hashCode(username, email, getId());
     }
 
     @Override
@@ -115,12 +115,12 @@ public class User implements Principal{
         this.email = email;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getPassword() {

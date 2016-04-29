@@ -7,6 +7,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
+import se.jelmstrom.sweepstake.league.LeagueResource;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 import se.jelmstrom.sweepstake.neo4j.NeoConfigHealthCheck;
 import se.jelmstrom.sweepstake.user.NeoUserRepository;
@@ -23,8 +24,9 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
         Neo4jClient neo4jClient = new Neo4jClient(config.getNeoConfiguration());
         environment.lifecycle().manage(neo4jClient);
 
-        NeoUserRepository neoRepo = new NeoUserRepository(neo4jClient);
-        environment.jersey().register(new UserResource(neoRepo));
+        NeoUserRepository userRepository = new NeoUserRepository(neo4jClient);
+        environment.jersey().register(new UserResource(userRepository));
+        environment.jersey().register(new LeagueResource(userRepository));
 
 
         Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
@@ -35,7 +37,7 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
         filter.setInitParameter("preflightMaxAge", "5184000"); // 2 months
         filter.setInitParameter("allowCredentials", "true");
 
-        UserAuthenticator.register(environment, config, neoRepo);
+        UserAuthenticator.register(environment, config, userRepository);
         environment.healthChecks().register("neo4j", new NeoConfigHealthCheck(neo4jClient));
     }
 

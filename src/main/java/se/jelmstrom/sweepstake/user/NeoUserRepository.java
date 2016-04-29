@@ -5,7 +5,6 @@ import org.neo4j.ogm.transaction.Transaction;
 import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +57,6 @@ public class NeoUserRepository {
     public boolean deleteUser(Long id){
         Transaction transaction = oClient.session().beginTransaction();
         oClient.session().delete(getUserById(id));
-        transaction.commit();
         return true;
     }
 
@@ -71,13 +69,13 @@ public class NeoUserRepository {
                     User.class
                     , "MATCH (u) where u.username = {username} AND u.password = {password} RETURN u"
                     , parameters);
-            return user == null?new User():user;
+            return user == null?new User():oClient.session().load(User.class, user.getId(), 3);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Use proper Encryption algorithm");
         }
     }
 
     private String encryptPassword(String password) throws NoSuchAlgorithmException {
-        return new String(MessageDigest.getInstance("MD5").digest(password.getBytes()));
+        return password;
     }
 }

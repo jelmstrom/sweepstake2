@@ -88,7 +88,7 @@ public class MatchResourceTest {
 
         userRepo.saveUser(user);
 
-        User userById = userRepo.getUserById(user.getUserId());
+        User userById = userRepo.getUserById(user.getId());
 
         assertThat(userById.getPredictions().size(), is (2));
         Stage stage = userById.getPredictions().iterator().next().getMatch().getStage();
