@@ -9,8 +9,8 @@ import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.setup.Environment;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import se.jelmstrom.sweepstake.application.SweepstakeConfiguration;
+import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.user.NeoUserRepository;
-import se.jelmstrom.sweepstake.user.User;
 
 import java.security.Principal;
 

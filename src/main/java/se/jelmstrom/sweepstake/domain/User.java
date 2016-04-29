@@ -1,4 +1,4 @@
-package se.jelmstrom.sweepstake.user;
+package se.jelmstrom.sweepstake.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,11 +8,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.Relationship;
 
 import javax.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements Principal{
@@ -28,6 +31,13 @@ public class User implements Principal{
     @JsonProperty
     private String password;
     private boolean isAdmin;
+    @JsonProperty
+    @Relationship(type= "PREDICTON", direction= Relationship.OUTGOING)
+    private Set<MatchPrediction> predictions = new HashSet<>();
+
+    @JsonProperty
+    @Relationship(type= "LEAGUE", direction= Relationship.OUTGOING)
+    private Set<League> leagues = new HashSet<>();
 
     public User() {
     }
@@ -127,5 +137,21 @@ public class User implements Principal{
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public boolean addPrediction(MatchPrediction prediction){
+        return predictions.add(prediction);
+    }
+
+    public Set<MatchPrediction> getPredictions() {
+        return predictions;
+    }
+
+    public Set<League> getLeagues() {
+        return leagues;
+    }
+
+    public void setLeagues(Set<League> leagues) {
+        this.leagues = leagues;
     }
 }

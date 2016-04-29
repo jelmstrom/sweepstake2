@@ -1,7 +1,7 @@
 package se.jelmstrom.sweepstake.application.authenticator;
 
 import io.dropwizard.auth.Authorizer;
-import se.jelmstrom.sweepstake.user.User;
+import se.jelmstrom.sweepstake.domain.User;
 
 import java.security.Principal;
 

@@ -2,6 +2,7 @@ package se.jelmstrom.sweepstake.user;
 
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.transaction.Transaction;
+import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 
 import java.security.MessageDigest;
@@ -26,7 +27,7 @@ public class NeoUserRepository {
         Transaction transaction = session.beginTransaction();
         try {
             user.setPassword(encryptPassword(user.getPassword()));
-            session.save(user, 1);
+            session.save(user);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("can not encrypt passwords to store in DB");
         }
@@ -50,11 +51,11 @@ public class NeoUserRepository {
     }
 
 
-    public User getUserById(String id){
-       return oClient.session().load(User.class, Long.parseLong(id));
+    public User getUserById(Long id){
+       return oClient.session().load(User.class, id, 3);
     }
 
-    public boolean deleteUser(String id){
+    public boolean deleteUser(Long id){
         Transaction transaction = oClient.session().beginTransaction();
         oClient.session().delete(getUserById(id));
         transaction.commit();

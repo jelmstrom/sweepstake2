@@ -5,11 +5,15 @@ import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
 import se.jelmstrom.sweepstake.application.NeoConfiguration;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthorizer;
+import se.jelmstrom.sweepstake.domain.League;
+import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 
 import javax.ws.rs.core.Response;
@@ -46,24 +50,8 @@ public class UserResourceTest {
             .addResource(new UserResource(new NeoUserRepository(neoClient)))
             .build();
 
-
-    @Rule
-    public ResourceTestRule rule = ResourceTestRule
-            .builder()
-            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
-            .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<>()
-                    .setAuthenticator(new UserAuthenticator(userRepo))
-                    .setAuthorizer(new UserAuthorizer())
-                    .setRealm("vmtips")
-                    .buildAuthFilter()))
-            .addProvider(RolesAllowedDynamicFeature.class)
-            .addProvider(new AuthValueFactoryProvider.Binder<>(Principal.class))
-            .addResource(new UserResource(userRepo))
-            .build();
-
     @Before
     public void setUp() throws Exception {
-
         neoClient.start();
     }
 
@@ -75,8 +63,7 @@ public class UserResourceTest {
 
     @Test
     public void testRegisterUser() throws Exception {
-        User user = createUser();
-
+        createUser();
     }
 
     @Test
@@ -115,7 +102,7 @@ public class UserResourceTest {
 
     private String getEntityAsString(ByteArrayInputStream entity) throws IOException {
         byte[] bytes = new byte[entity.available()];
-        int read = entity.read(bytes);
+        entity.read(bytes);
         return new String(bytes);
     }
 
@@ -205,6 +192,24 @@ public class UserResourceTest {
         String bodyContent = getEntityAsString(entity);
         assertThat(bodyContent, containsString("\"email\""));
         assertThat(bodyContent, containsString("\"username\""));
+    }
+
+
+    @Test
+    public void userBelongsToLeague(){
+        User user = new User("user", "email", null, "pwd");
+        League league = new League();
+        league.getUsers().add(user);
+        user.getLeagues().add(league);
+
+        userRepo.saveUser(user);
+        User userById = userRepo.getUserById(user.getUserId());
+        assertThat(userById, is(notNullValue()));
+        assertThat(userById.getLeagues().iterator().next(), is(notNullValue()));
+
+        neoClient.session().delete(user);
+        neoClient.session().delete(league);
+
     }
 
     private User createUser() {

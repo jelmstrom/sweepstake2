@@ -12,8 +12,8 @@ import org.neo4j.ogm.session.Session;
 import se.jelmstrom.sweepstake.application.NeoConfiguration;
 import se.jelmstrom.sweepstake.application.SweepstakeConfiguration;
 import se.jelmstrom.sweepstake.application.SweepstakeMain;
+import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
-import se.jelmstrom.sweepstake.user.User;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;

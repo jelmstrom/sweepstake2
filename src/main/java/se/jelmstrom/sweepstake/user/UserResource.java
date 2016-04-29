@@ -4,6 +4,7 @@ package se.jelmstrom.sweepstake.user;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jelmstrom.sweepstake.domain.User;
 
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
@@ -74,7 +75,7 @@ public class UserResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUser(@PathParam("id") String userId){
+    public Response getUser(@PathParam("id") Long userId){
         User user = userRepo.getUserById(userId);
         return Response.ok(user).build();
     }
