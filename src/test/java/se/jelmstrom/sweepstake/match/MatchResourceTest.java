@@ -19,6 +19,7 @@ import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 import se.jelmstrom.sweepstake.user.NeoUserRepository;
 import se.jelmstrom.sweepstake.user.UserResource;
+import se.jelmstrom.sweepstake.user.UserService;
 
 import java.security.Principal;
 import java.util.Date;
@@ -39,6 +40,7 @@ public class MatchResourceTest {
     private static final NeoMatchRepo matchRepo = new NeoMatchRepo(neoClient);
 
     private static NeoUserRepository userRepo = new NeoUserRepository(neoClient);
+    private static UserService userService = new UserService(userRepo);
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
             .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<>()
@@ -48,7 +50,7 @@ public class MatchResourceTest {
                     .buildAuthFilter()))
             .addProvider(RolesAllowedDynamicFeature.class)
             .addProvider(new AuthValueFactoryProvider.Binder<>(Principal.class))
-            .addResource(new UserResource(userRepo))
+            .addResource(new UserResource(userService))
             .addResource(new MatchResource(matchRepo))
             .build();
 

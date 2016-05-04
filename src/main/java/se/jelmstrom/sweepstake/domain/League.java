@@ -15,7 +15,6 @@ public class League extends Entity{
     @Relationship(type= "LEAGUE", direction= Relationship.INCOMING)
     private Set<User> users  = new HashSet<>();
 
-
     public League() {
 
     }

@@ -37,7 +37,7 @@ public class Neo4jClient implements Managed {
     public void start() throws Exception {
         Collection<Match> matches = session().loadAll(Match.class);
         if(matches.isEmpty()){
-            matches.add(new Match());
+          //  matches.add(new Match());
         }
 
         /*

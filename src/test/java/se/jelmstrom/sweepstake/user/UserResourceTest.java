@@ -37,6 +37,7 @@ public class UserResourceTest {
             , "neo4j");
     private static final Neo4jClient neoClient = new Neo4jClient(config);
     private static final NeoUserRepository userRepo = new NeoUserRepository(neoClient);
+    private static final UserService userService= new UserService(userRepo);
 
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
@@ -47,7 +48,7 @@ public class UserResourceTest {
                     .buildAuthFilter()))
             .addProvider(RolesAllowedDynamicFeature.class)
             .addProvider(new AuthValueFactoryProvider.Binder<>(Principal.class))
-            .addResource(new UserResource(new NeoUserRepository(neoClient)))
+            .addResource(new UserResource(userService))
             .build();
 
     @Before

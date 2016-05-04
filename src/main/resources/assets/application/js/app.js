@@ -5,6 +5,7 @@ var main = {
     hideAllTags : function (){
         $("#tag-register").hide();
         $("#tag-user").hide();
+        $("#userdetails-leaderboard").hide();
     },
     user : function(){
         return main.session.get("user");
@@ -16,15 +17,21 @@ var main = {
 
     },
 
+    buildUrl : function(endpoint) {
+        if(main.dev){
+            return  'http://localhost:8081'+endpoint
+        } else {
+            return endpoint;
+        }
+    },
+
     makeAjaxCall : function (url, type, data) {
             var deferredObject = $.Deferred();
             var msgBody;
             if(data){
                 msgBody=JSON.stringify(data);
             }
-            if(main.dev){
-                url = 'http://localhost:8081'+url
-            }
+            url = main.buildUrl(url);
             var userName;
             if(main.session.get("user")){
                 userName=main.session.get("user").username;
@@ -119,6 +126,7 @@ var user = {
             "ordering": false,
             "aaData": userLeagues,
             "columns": [
+                {"data" : "id", visible : false},
                 {"data": "leagueName"},
                 {"data": null}
             ],
