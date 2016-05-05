@@ -193,6 +193,8 @@ public class UserResourceTest {
         String bodyContent = getEntityAsString(entity);
         assertThat(bodyContent, containsString("\"email\""));
         assertThat(bodyContent, containsString("\"username\""));
+        assertThat(bodyContent, containsString("\"points\""));
+
     }
 
 

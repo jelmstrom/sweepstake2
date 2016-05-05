@@ -166,7 +166,7 @@
                         },
                         "columns": [
                             {"data" : "username"},
-                            {"data": null}
+                            {"data": "points"}
                         ],
                         "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                             console.log("aData");

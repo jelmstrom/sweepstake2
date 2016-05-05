@@ -61,6 +61,10 @@ public class MatchResourceTest {
 
     @After
     public void tearDown(){
+        neoClient.session().deleteAll(Match.class);
+        neoClient.session().deleteAll(User.class);
+        neoClient.session().deleteAll(MatchPrediction.class);
+        neoClient.session().deleteAll(Stage.class);
     }
 
     @Test
@@ -102,8 +106,5 @@ public class MatchResourceTest {
         neoClient.session().delete(stage1);
         neoClient.session().delete(prediction);
         neoClient.session().delete(prediction1);
-
-
-
     }
 }

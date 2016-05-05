@@ -68,4 +68,31 @@ public class MatchPrediction extends Entity{
     public void setAwayGoals(Integer awayGoals) {
         this.awayGoals = awayGoals;
     }
+
+
+    /*
+    Points for
+     - correct winner (sign of compare  (1,0,-1) is equal)
+     - correct number of goals for each team
+     */
+    int score() {
+        if(!match.hasResult() || !this.hasResult()){
+            return 0;
+        }
+        int points = 0;
+        if(homeGoals.equals(match.getHomeGoals())){
+            points++;
+        }
+        if(awayGoals.equals(match.getAwayGoals())){
+            points++;
+        }
+        if(Integer.compare(homeGoals, awayGoals) == Integer.compare(match.getHomeGoals(), match.getAwayGoals())){
+            points++;
+        }
+        return points;
+    }
+
+    private boolean hasResult() {
+        return homeGoals != null && awayGoals != null;
+    }
 }

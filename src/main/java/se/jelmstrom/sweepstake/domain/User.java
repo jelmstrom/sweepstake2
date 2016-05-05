@@ -1,6 +1,7 @@
 package se.jelmstrom.sweepstake.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown=true) // for getPoints()
 public class User extends Entity implements Principal{
 
     @JsonProperty
@@ -136,6 +138,7 @@ public class User extends Entity implements Principal{
     }
 
     public boolean addPrediction(MatchPrediction prediction){
+        prediction.setUser(this);
         return predictions.add(prediction);
     }
 
@@ -149,5 +152,9 @@ public class User extends Entity implements Principal{
 
     public void setLeagues(Set<League> leagues) {
         this.leagues = leagues;
+    }
+    @JsonProperty("points")
+    public int getPoints() {
+        return predictions.stream().mapToInt(prediction -> prediction.score()).sum();
     }
 }

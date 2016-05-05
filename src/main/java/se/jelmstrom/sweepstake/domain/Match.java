@@ -9,7 +9,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Match extends Entity{
+import static org.neo4j.ogm.annotation.Relationship.INCOMING;
+import static org.neo4j.ogm.annotation.Relationship.OUTGOING;
+
+public class Match extends Entity {
     @JsonProperty
     private String home;
     @JsonProperty
@@ -21,11 +24,11 @@ public class Match extends Entity{
     @JsonProperty
     private Integer awayGoals;
     @JsonProperty
-    @Relationship(type= "PREDICTON", direction= Relationship.INCOMING)
+    @Relationship(type = "PREDICTON", direction = INCOMING)
     private Set<MatchPrediction> predictions = new HashSet<>();
 
     @JsonProperty
-    @Relationship(type= "STAGE", direction= Relationship.OUTGOING)
+    @Relationship(type = "STAGE", direction = OUTGOING)
     private Stage stage;
 
 
@@ -36,7 +39,8 @@ public class Match extends Entity{
         this.id = id;
         this.home = home;
         this.away = away;
-        this.kickoff = kickoff;this.homeGoals = homeGoals;
+        this.kickoff = kickoff;
+        this.homeGoals = homeGoals;
         this.awayGoals = awayGoals;
         this.stage = stage;
     }
@@ -107,5 +111,9 @@ public class Match extends Entity{
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public boolean hasResult() {
+        return awayGoals != null && homeGoals != null;
     }
 }
