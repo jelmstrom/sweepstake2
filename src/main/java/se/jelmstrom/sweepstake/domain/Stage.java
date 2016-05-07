@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+import java.util.HashSet;
 import java.util.Set;
-
+/*
+ Neo maps enums as properties or relationships, not as nodes
+*/
 @NodeEntity
 public class Stage extends Entity{
-
-
     public enum CompetitionStage {
         GROUP_A("A"),
         GROUP_B("B"),
@@ -38,10 +39,14 @@ public class Stage extends Entity{
 
     @JsonProperty
     @Relationship(type= "STAGE", direction= Relationship.INCOMING)
-    private Set<Match> matches;
+    private Set<Match> matches = new HashSet<>();
 
 
     public Stage() {
+    }
+
+    public Stage(CompetitionStage stage) {
+        this.stage = stage;
     }
 
     public Stage(CompetitionStage stage, Set<Match> matches) {

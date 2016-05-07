@@ -35,6 +35,13 @@ public class Match extends Entity {
     public Match() {
     }
 
+    public Match(String home, String away, Date kickoff, Stage stage) {
+        this.stage = stage;
+        this.kickoff = kickoff;
+        this.away = away;
+        this.home = home;
+    }
+
     public Match(Long id, String home, String away, Date kickoff, Integer homeGoals, Integer awayGoals, Stage stage) {
         this.id = id;
         this.home = home;

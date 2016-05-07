@@ -62,5 +62,4 @@ public class Neo4jDbSetupTest {
         session.delete(object);
     }
 
-
 }

@@ -9,6 +9,8 @@ public class NeoConfiguration {
     private String credentials = "local";
     @JsonProperty
     private String user = "neo4j";
+    @JsonProperty
+    public boolean purge = false;
 
     public NeoConfiguration() {
     }
@@ -41,5 +43,13 @@ public class NeoConfiguration {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public boolean isPurge() {
+        return purge;
+    }
+
+    public void setPurge(boolean purge) {
+        this.purge = purge;
     }
 }

@@ -57,14 +57,12 @@ public class MatchResourceTest {
     @Before
     public void setUp() throws Exception {
         neoClient.start();
+        neoClient.session().purgeDatabase();
     }
 
     @After
-    public void tearDown(){
-        neoClient.session().deleteAll(Match.class);
-        neoClient.session().deleteAll(User.class);
-        neoClient.session().deleteAll(MatchPrediction.class);
-        neoClient.session().deleteAll(Stage.class);
+    public void tearDown() {
+         neoClient.session().purgeDatabase();
     }
 
     @Test
