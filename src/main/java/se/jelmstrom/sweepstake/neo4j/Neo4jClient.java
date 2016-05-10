@@ -6,6 +6,7 @@ import org.neo4j.ogm.config.Configuration;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import se.jelmstrom.sweepstake.application.NeoConfiguration;
+import se.jelmstrom.sweepstake.domain.CompetitionStage;
 import se.jelmstrom.sweepstake.domain.Group;
 import se.jelmstrom.sweepstake.domain.Match;
 
@@ -46,25 +47,25 @@ public class Neo4jClient implements Managed {
         }
         Collection<Group> groups = session().loadAll(Group.class);
         if(groups.isEmpty()) {
-            Group A = new Group(Group.CompetitionStage.GROUP_A);
+            Group A = new Group(CompetitionStage.GROUP_A);
             groups.add(A);
-            Group B = new Group(Group.CompetitionStage.GROUP_B);
+            Group B = new Group(CompetitionStage.GROUP_B);
             groups.add(B);
-            Group C = new Group(Group.CompetitionStage.GROUP_C);
+            Group C = new Group(CompetitionStage.GROUP_C);
             groups.add(C);
-            Group D = new Group(Group.CompetitionStage.GROUP_D);
+            Group D = new Group(CompetitionStage.GROUP_D);
             groups.add(D);
-            Group E = new Group(Group.CompetitionStage.GROUP_E);
+            Group E = new Group(CompetitionStage.GROUP_E);
             groups.add(E);
-            Group F = new Group(Group.CompetitionStage.GROUP_F);
+            Group F = new Group(CompetitionStage.GROUP_F);
             groups.add(F);
-            Group LAST_16 = new Group(Group.CompetitionStage.LAST_16);
+            Group LAST_16 = new Group(CompetitionStage.LAST_16);
             groups.add(LAST_16);
-            Group QF = new Group(Group.CompetitionStage.QUARTER_FINAL);
+            Group QF = new Group(CompetitionStage.QUARTER_FINAL);
             groups.add(QF);
-            Group SF = new Group(Group.CompetitionStage.SEMI_FINAL);
+            Group SF = new Group(CompetitionStage.SEMI_FINAL);
             groups.add(SF);
-            Group fin = new Group(Group.CompetitionStage.FINAL);
+            Group fin = new Group(CompetitionStage.FINAL);
             groups.add(fin);
             groups.stream().forEach(stage -> session().save(stage));
             Collection<Match> matches = session().loadAll(Match.class);

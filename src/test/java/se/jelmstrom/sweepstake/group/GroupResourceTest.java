@@ -13,6 +13,7 @@ import org.junit.Test;
 import se.jelmstrom.sweepstake.application.NeoConfiguration;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthorizer;
+import se.jelmstrom.sweepstake.domain.CompetitionStage;
 import se.jelmstrom.sweepstake.domain.Group;
 import se.jelmstrom.sweepstake.domain.TeamRecord;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
@@ -60,7 +61,7 @@ public class GroupResourceTest {
 
     @Test
     public void shouldLoadGroupA() throws IOException {
-        Group group = repo.getStage(Group.CompetitionStage.GROUP_A);
+        Group group = repo.getStage(CompetitionStage.GROUP_A);
         group.getMatches().forEach(match -> {
             match.setAwayGoals(0);
             match.setHomeGoals(1);

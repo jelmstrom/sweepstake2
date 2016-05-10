@@ -37,7 +37,7 @@ public class UserTest {
     @Test
     public void userPointsCalculatedFromGroupPredictions(){
         User user = new User("", "", 0L);
-        Group group = new Group(Group.CompetitionStage.GROUP_A, new HashSet<>());
+        Group group = new Group(CompetitionStage.GROUP_A, new HashSet<>());
         Match match1 = new Match(1L, "", "", new Date(), 1, 0, group);
         Match match2 = new Match(2L, "", "", new Date(), 0, 0, group);
 

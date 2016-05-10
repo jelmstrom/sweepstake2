@@ -22,38 +22,11 @@ import static java.util.stream.Collectors.toMap;
 @NodeEntity
 public class Group extends Entity{
 
-
-    public enum CompetitionStage {
-        GROUP_A("A"),
-        GROUP_B("B"),
-        GROUP_C("C"),
-        GROUP_D("D"),
-        GROUP_E("E"),
-        GROUP_F("F"),
-        LAST_16("16"),
-        QUARTER_FINAL("QF"),
-        SEMI_FINAL("SF"),
-        FINAL("F");
-
-        private String label;
-
-        CompetitionStage(String label) {
-            this.label = label;
-        }
-
-        public String getlabel(){
-            return label;
-        }
-    }
-
     @JsonProperty
     private CompetitionStage stage;
-
-
     @JsonProperty
     @Relationship(type= "GROUP", direction= Relationship.INCOMING)
     private Set<Match> matches = new HashSet<>();
-
 
     public Group() {
     }

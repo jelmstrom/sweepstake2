@@ -1,5 +1,6 @@
 package se.jelmstrom.sweepstake.group;
 
+import se.jelmstrom.sweepstake.domain.CompetitionStage;
 import se.jelmstrom.sweepstake.domain.Group;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 
@@ -14,7 +15,7 @@ public class GroupRepository {
     }
 
 
-    public Group getStage(Group.CompetitionStage competitionStage){
+    public Group getStage(CompetitionStage competitionStage){
         String query = "MATCH (group:Group)-[:GROUP]-(match:Match) where group.stage = {stage_name} RETURN group, match";
         Map<String, String> parameters = new HashMap<>();
         parameters.put("stage_name", competitionStage.name());

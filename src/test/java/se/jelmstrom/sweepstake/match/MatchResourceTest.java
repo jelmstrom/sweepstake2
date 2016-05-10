@@ -28,7 +28,7 @@ import java.util.HashSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static se.jelmstrom.sweepstake.domain.Group.CompetitionStage.GROUP_A;
+import static se.jelmstrom.sweepstake.domain.CompetitionStage.GROUP_A;
 
 public class MatchResourceTest {
 

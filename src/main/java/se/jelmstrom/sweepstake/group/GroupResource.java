@@ -1,5 +1,6 @@
 package se.jelmstrom.sweepstake.group;
 
+import se.jelmstrom.sweepstake.domain.CompetitionStage;
 import se.jelmstrom.sweepstake.domain.Group;
 
 import javax.ws.rs.*;
@@ -19,7 +20,7 @@ public class GroupResource {
     @GET
     @Path("/{name}")
     public Response getStage(@PathParam("name") String stageName){
-        Group.CompetitionStage stage = Group.CompetitionStage.valueOf(stageName);
+        CompetitionStage stage = CompetitionStage.valueOf(stageName);
         Group group1 = service.getStage(stage);
         return Response.ok(group1).build();
     }
