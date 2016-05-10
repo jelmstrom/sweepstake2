@@ -6,8 +6,8 @@ import org.neo4j.ogm.config.Configuration;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import se.jelmstrom.sweepstake.application.NeoConfiguration;
+import se.jelmstrom.sweepstake.domain.Group;
 import se.jelmstrom.sweepstake.domain.Match;
-import se.jelmstrom.sweepstake.domain.Stage;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -44,29 +44,29 @@ public class Neo4jClient implements Managed {
         if(config.purge){
             session().purgeDatabase();
         }
-        Collection<Stage> stages = session().loadAll(Stage.class);
-        if(stages.isEmpty()) {
-            Stage A = new Stage(Stage.CompetitionStage.GROUP_A);
-            stages.add(A);
-            Stage B = new Stage(Stage.CompetitionStage.GROUP_B);
-            stages.add(B);
-            Stage C = new Stage(Stage.CompetitionStage.GROUP_C);
-            stages.add(C);
-            Stage D = new Stage(Stage.CompetitionStage.GROUP_D);
-            stages.add(D);
-            Stage E = new Stage(Stage.CompetitionStage.GROUP_E);
-            stages.add(E);
-            Stage F = new Stage(Stage.CompetitionStage.GROUP_F);
-            stages.add(F);
-            Stage LAST_16 = new Stage(Stage.CompetitionStage.LAST_16);
-            stages.add(LAST_16);
-            Stage QF = new Stage(Stage.CompetitionStage.QUARTER_FINAL);
-            stages.add(QF);
-            Stage SF = new Stage(Stage.CompetitionStage.SEMI_FINAL);
-            stages.add(SF);
-            Stage fin = new Stage(Stage.CompetitionStage.FINAL);
-            stages.add(fin);
-            stages.stream().forEach(stage -> session().save(stage));
+        Collection<Group> groups = session().loadAll(Group.class);
+        if(groups.isEmpty()) {
+            Group A = new Group(Group.CompetitionStage.GROUP_A);
+            groups.add(A);
+            Group B = new Group(Group.CompetitionStage.GROUP_B);
+            groups.add(B);
+            Group C = new Group(Group.CompetitionStage.GROUP_C);
+            groups.add(C);
+            Group D = new Group(Group.CompetitionStage.GROUP_D);
+            groups.add(D);
+            Group E = new Group(Group.CompetitionStage.GROUP_E);
+            groups.add(E);
+            Group F = new Group(Group.CompetitionStage.GROUP_F);
+            groups.add(F);
+            Group LAST_16 = new Group(Group.CompetitionStage.LAST_16);
+            groups.add(LAST_16);
+            Group QF = new Group(Group.CompetitionStage.QUARTER_FINAL);
+            groups.add(QF);
+            Group SF = new Group(Group.CompetitionStage.SEMI_FINAL);
+            groups.add(SF);
+            Group fin = new Group(Group.CompetitionStage.FINAL);
+            groups.add(fin);
+            groups.stream().forEach(stage -> session().save(stage));
             Collection<Match> matches = session().loadAll(Match.class);
             if (matches.isEmpty()) {
                 matches.add(buildMatch("10 June, 21.00","France", "Romania",  A));
@@ -137,7 +137,7 @@ Quarter-finals
 */
     }
 
-    private Match buildMatch(String time, String home, String away, Stage group){
+    private Match buildMatch(String time, String home, String away, Group group){
         return new Match(home, away, toDate(time), group);
     }
 

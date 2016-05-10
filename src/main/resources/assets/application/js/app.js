@@ -71,6 +71,7 @@ var menu = {
         $("#menu-register").show();
         main.hideAllTags();
     },
+
     userLoggedIn : function() {
         $("#menu-user").show();
         $("#p-user").text(main.session.get("user").username);
@@ -137,10 +138,17 @@ var user = {
     }
 };
 
+var group = {
+    
+    showGroup : function (){
+        main.makeAjaxCall("")
+    }
+    
+}
+
 
 $(document).ready(function() {
     main.hideAllTags();
-    main.hideAlerts();
     if(!main.session.get("user")){
         menu.userLoggedOut();
     } else {

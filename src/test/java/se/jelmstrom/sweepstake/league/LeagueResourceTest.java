@@ -52,15 +52,15 @@ public class LeagueResourceTest {
             .build();
     private User user;
     private Match match;
-    private Stage stage;
+    private Group group;
 
     @After
     public void tearDown(){
         Session session = neoClient.session();
         session.delete(userRepo.getUserById(user.getId()).getLeagues().iterator().next());
         session.delete(user);
-        if(stage != null){
-            session.delete(stage);
+        if(group != null){
+            session.delete(group);
         }
         if(match != null){
             session.delete(match);
@@ -103,9 +103,9 @@ public class LeagueResourceTest {
     @Test
     public void leaderboardReturnsListOfUsers() throws IOException {
         user = new User("test_user", "test_user@email.com", null, "aPassword");
-        stage = new Stage(Stage.CompetitionStage.GROUP_A, new HashSet<>());
-        match = new Match(null, "Swe", "Den", new Date(), 1, 0, stage);
-        match.getStage().getMatches().add(match);
+        group = new Group(Group.CompetitionStage.GROUP_A, new HashSet<>());
+        match = new Match(null, "Swe", "Den", new Date(), 1, 0, group);
+        match.getGroup().getMatches().add(match);
         user.addPrediction(new MatchPrediction(null, user, match, 1, 0));
         userRepo.saveUser(user);
 

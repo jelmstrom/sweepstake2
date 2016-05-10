@@ -37,12 +37,12 @@ public class UserTest {
     @Test
     public void userPointsCalculatedFromGroupPredictions(){
         User user = new User("", "", 0L);
-        Stage stage = new Stage(Stage.CompetitionStage.GROUP_A, new HashSet<>());
-        Match match1 = new Match(1L, "", "", new Date(), 1, 0,  stage);
-        Match match2 = new Match(2L, "", "", new Date(), 0, 0,  stage);
+        Group group = new Group(Group.CompetitionStage.GROUP_A, new HashSet<>());
+        Match match1 = new Match(1L, "", "", new Date(), 1, 0, group);
+        Match match2 = new Match(2L, "", "", new Date(), 0, 0, group);
 
-        stage.getMatches().add(match1);
-        stage.getMatches().add(match2);
+        group.getMatches().add(match1);
+        group.getMatches().add(match2);
 
         MatchPrediction prediction1 = new MatchPrediction(1L, user, match1, 1,0);
         MatchPrediction prediction2 = new MatchPrediction(1L, user, match2, 1,0);

@@ -12,9 +12,9 @@ import org.junit.Test;
 import se.jelmstrom.sweepstake.application.NeoConfiguration;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthorizer;
+import se.jelmstrom.sweepstake.domain.Group;
 import se.jelmstrom.sweepstake.domain.Match;
 import se.jelmstrom.sweepstake.domain.MatchPrediction;
-import se.jelmstrom.sweepstake.domain.Stage;
 import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 import se.jelmstrom.sweepstake.user.NeoUserRepository;
@@ -28,7 +28,7 @@ import java.util.HashSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static se.jelmstrom.sweepstake.domain.Stage.CompetitionStage.GROUP_A;
+import static se.jelmstrom.sweepstake.domain.Group.CompetitionStage.GROUP_A;
 
 public class MatchResourceTest {
 
@@ -67,7 +67,7 @@ public class MatchResourceTest {
 
     @Test
     public void insertMatch(){
-        Match match = new Match(null, "Sweden", "Brazil", new Date(),1, 0, new Stage(GROUP_A, new HashSet<>()));
+        Match match = new Match(null, "Sweden", "Brazil", new Date(),1, 0, new Group(GROUP_A, new HashSet<>()));
         matchRepo.create(match);
         assertThat(matchRepo.list().size(), is(1));
         neoClient.session().delete(match);
@@ -77,11 +77,11 @@ public class MatchResourceTest {
     @Test
     public void matchWithPrediction(){
         User user = new User("user", "email", null, "");
-        Stage stage1 = new Stage(GROUP_A, new HashSet<>());
-        Match match = new Match(null, "Sweden", "Brazil", new Date(),1, 0, stage1);
-        Match match2 = new Match(null, "Germany", "Finland", new Date(),11, 0, stage1);
-        stage1.getMatches().add(match);
-        stage1.getMatches().add(match2);
+        Group group1 = new Group(GROUP_A, new HashSet<>());
+        Match match = new Match(null, "Sweden", "Brazil", new Date(),1, 0, group1);
+        Match match2 = new Match(null, "Germany", "Finland", new Date(),11, 0, group1);
+        group1.getMatches().add(match);
+        group1.getMatches().add(match2);
         matchRepo.create(match);
         matchRepo.create(match2);
 
@@ -95,13 +95,13 @@ public class MatchResourceTest {
         User userById = userRepo.getUserById(user.getId());
 
         assertThat(userById.getPredictions().size(), is (2));
-        Stage stage = userById.getPredictions().iterator().next().getMatch().getStage();
-        assertThat(stage, is(notNullValue()));
+        Group group = userById.getPredictions().iterator().next().getMatch().getGroup();
+        assertThat(group, is(notNullValue()));
 
         neoClient.session().delete(user);
         neoClient.session().delete(match);
         neoClient.session().delete(match2);
-        neoClient.session().delete(stage1);
+        neoClient.session().delete(group1);
         neoClient.session().delete(prediction);
         neoClient.session().delete(prediction1);
     }

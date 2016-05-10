@@ -5,9 +5,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.DateLong;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 import static org.neo4j.ogm.annotation.Relationship.OUTGOING;
@@ -28,28 +30,28 @@ public class Match extends Entity {
     private Set<MatchPrediction> predictions = new HashSet<>();
 
     @JsonProperty
-    @Relationship(type = "STAGE", direction = OUTGOING)
-    private Stage stage;
+    @Relationship(type = "GROUP", direction = OUTGOING)
+    private Group group;
 
 
     public Match() {
     }
 
-    public Match(String home, String away, Date kickoff, Stage stage) {
-        this.stage = stage;
+    public Match(String home, String away, Date kickoff, Group group) {
+        this.group = group;
         this.kickoff = kickoff;
         this.away = away;
         this.home = home;
     }
 
-    public Match(Long id, String home, String away, Date kickoff, Integer homeGoals, Integer awayGoals, Stage stage) {
+    public Match(Long id, String home, String away, Date kickoff, Integer homeGoals, Integer awayGoals, Group group) {
         this.id = id;
         this.home = home;
         this.away = away;
         this.kickoff = kickoff;
         this.homeGoals = homeGoals;
         this.awayGoals = awayGoals;
-        this.stage = stage;
+        this.group = group;
     }
 
     public Long getId() {
@@ -112,15 +114,40 @@ public class Match extends Entity {
                 .toString();
     }
 
-    public Stage getStage() {
-        return stage;
+    public Group getGroup() {
+        return group;
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     public boolean hasResult() {
         return awayGoals != null && homeGoals != null;
+    }
+
+    public Integer homePoints() {
+        return points(homeGoals, awayGoals);
+    }
+    public Integer awayPoints() {
+        return points(awayGoals, homeGoals);
+    }
+
+    private Integer points(Integer awayGoals, Integer homeGoals) {
+        if(hasResult()){
+            int factor =  awayGoals.compareTo(homeGoals);
+            switch (factor) {
+                case 1: return 3;
+                case 0: return 1;
+            }
+        }
+        return 0;
+    }
+
+    public Stream<TeamRecord> records() {
+        return Arrays.asList(
+                new TeamRecord(home, homeGoals, awayGoals, homePoints())
+                , new TeamRecord(away, awayGoals, homeGoals, awayPoints())).stream();
+
     }
 }
