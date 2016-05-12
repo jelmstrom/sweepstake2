@@ -28,7 +28,6 @@ import java.util.HashSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static se.jelmstrom.sweepstake.domain.CompetitionStage.GROUP_A;
 
 public class MatchResourceTest {
 
@@ -67,7 +66,7 @@ public class MatchResourceTest {
 
     @Test
     public void insertMatch(){
-        Match match = new Match(null, "Sweden", "Brazil", new Date(),1, 0, new Group(GROUP_A, new HashSet<>()));
+        Match match = new Match(null, "Sweden", "Brazil", new Date(),1, 0, new Group("A", new HashSet<>()));
         matchRepo.create(match);
         assertThat(matchRepo.list().size(), is(1));
         neoClient.session().delete(match);
@@ -77,7 +76,7 @@ public class MatchResourceTest {
     @Test
     public void matchWithPrediction(){
         User user = new User("user", "email", null, "");
-        Group group1 = new Group(GROUP_A, new HashSet<>());
+        Group group1 = new Group("A", new HashSet<>());
         Match match = new Match(null, "Sweden", "Brazil", new Date(),1, 0, group1);
         Match match2 = new Match(null, "Germany", "Finland", new Date(),11, 0, group1);
         group1.getMatches().add(match);

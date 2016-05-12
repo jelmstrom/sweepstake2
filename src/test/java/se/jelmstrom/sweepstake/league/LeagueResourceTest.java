@@ -103,7 +103,7 @@ public class LeagueResourceTest {
     @Test
     public void leaderboardReturnsListOfUsers() throws IOException {
         user = new User("test_user", "test_user@email.com", null, "aPassword");
-        group = new Group(CompetitionStage.GROUP_A, new HashSet<>());
+        group = new Group("A", new HashSet<>());
         match = new Match(null, "Swe", "Den", new Date(), 1, 0, group);
         match.getGroup().getMatches().add(match);
         user.addPrediction(new MatchPrediction(null, user, match, 1, 0));

@@ -23,20 +23,21 @@ import static java.util.stream.Collectors.toMap;
 public class Group extends Entity{
 
     @JsonProperty
-    private CompetitionStage stage;
-    @JsonProperty
     @Relationship(type= "GROUP", direction= Relationship.INCOMING)
     private Set<Match> matches = new HashSet<>();
+
+    @JsonProperty
+    private String groupName;
 
     public Group() {
     }
 
-    public Group(CompetitionStage stage) {
-        this.stage = stage;
+    public Group(String name) {
+        this.groupName = name;
     }
 
-    public Group(CompetitionStage stage, Set<Match> matches) {
-        this.stage = stage;
+    public Group(String name, Set<Match> matches) {
+        this.groupName = name;
         this.matches = matches;
     }
 
@@ -46,14 +47,6 @@ public class Group extends Entity{
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public CompetitionStage getStage() {
-        return stage;
-    }
-
-    public void setStage(CompetitionStage stage) {
-        this.stage = stage;
     }
 
     public Set<Match> getMatches() {

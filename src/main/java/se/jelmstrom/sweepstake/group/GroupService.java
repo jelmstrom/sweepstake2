@@ -1,6 +1,5 @@
 package se.jelmstrom.sweepstake.group;
 
-import se.jelmstrom.sweepstake.domain.CompetitionStage;
 import se.jelmstrom.sweepstake.domain.Group;
 
 public class GroupService {
@@ -10,7 +9,7 @@ public class GroupService {
         this.repo = repo;
     }
 
-    public Group getStage(CompetitionStage stageName){
+    public Group getStage(String stageName){
         return repo.getStage(stageName);
     }
 

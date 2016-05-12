@@ -33,6 +33,9 @@ public class Match extends Entity {
     @Relationship(type = "GROUP", direction = OUTGOING)
     private Group group;
 
+    @JsonProperty
+    private CompetitionStage stage;
+
 
     public Match() {
     }

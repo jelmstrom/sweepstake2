@@ -1,12 +1,7 @@
 package se.jelmstrom.sweepstake.domain;
 
 public enum CompetitionStage {
-        GROUP_A("A"),
-        GROUP_B("B"),
-        GROUP_C("C"),
-        GROUP_D("D"),
-        GROUP_E("E"),
-        GROUP_F("F"),
+        GROUP("G"),
         LAST_16("16"),
         QUARTER_FINAL("QF"),
         SEMI_FINAL("SF"),
