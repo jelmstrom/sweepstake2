@@ -17,12 +17,12 @@
 
                     <ul class="nav navbar-nav" id="navbar-groups">
                         <!-- disable tabs that operate on a logger when there is no logger connected -->
-                        <li class="navitem" id="menuGroupA" onClick=""><a href="#">Group A</a></li>
-                        <li class="navitem" id="menuGroupB" onClick=""><a href="#">Group B</a></li>
-                        <li class="navitem" id="menuGroupC" onClick=""><a href="#">Group C</a></li>
-                        <li class="navitem" id="menuGroupD" onClick=""><a href="#">Group D</a></li>
-                        <li class="navitem" id="menuGroupE" onClick=""><a href="#">Group E</a></li>
-                        <li class="navitem" id="menuGroupF" onClick=""><a href="#">Group F</a></li>
+                        <li class="navitem" id="menuGroupA" onClick="javascript: group.showGroup('A')"><a href="#">Group A</a></li>
+                        <li class="navitem" id="menuGroupB" onClick="javascript: group.showGroup('B')"><a href="#">Group B</a></li>
+                        <li class="navitem" id="menuGroupC" onClick="javascript: group.showGroup('C')"><a href="#">Group C</a></li>
+                        <li class="navitem" id="menuGroupD" onClick="javascript: group.showGroup('D')"><a href="#">Group D</a></li>
+                        <li class="navitem" id="menuGroupE" onClick="javascript: group.showGroup('E')"><a href="#">Group E</a></li>
+                        <li class="navitem" id="menuGroupF" onClick="javascript: group.showGroup('F')"><a href="#">Group F</a></li>
                     </ul>
                     <ul class="nav navbar-nav" id="navbar-playoff">
                         <li class="navitem" id="menuPlayoff"><a href="#">Playoff</a></li>

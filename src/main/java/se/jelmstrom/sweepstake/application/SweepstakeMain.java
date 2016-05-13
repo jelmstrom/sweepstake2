@@ -7,6 +7,9 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
+import se.jelmstrom.sweepstake.group.GroupRepository;
+import se.jelmstrom.sweepstake.group.GroupResource;
+import se.jelmstrom.sweepstake.group.GroupService;
 import se.jelmstrom.sweepstake.league.LeagueRepository;
 import se.jelmstrom.sweepstake.league.LeagueResource;
 import se.jelmstrom.sweepstake.league.LeagueService;
@@ -30,6 +33,7 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
         NeoUserRepository userRepository = new NeoUserRepository(neo4jClient);
         environment.jersey().register(new UserResource(new UserService(userRepository)));
         environment.jersey().register(new LeagueResource(userRepository, new LeagueService(new LeagueRepository(neo4jClient), userRepository)));
+        environment.jersey().register(new GroupResource(new GroupService(new GroupRepository(neo4jClient))));
 
 
         Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);

@@ -6,20 +6,46 @@
                     <table class="table ">
                         <thead>
                             <tr>
-                                <th width="50%">Team</th>
+                                <th width="5%"></th>
+                                <th width="65%">Team</th>
                                 <th width="5%">+</th>
                                 <th width="5%">-</th>
                                 <th width="5%">+/-</th>
-                                <th width="35%">points</th>
+                                <th width="15%">points</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="groupTable">
                         <tr>
-                            <td> hasdkahd</td>
-                            <td> 10 </td>
-                            <td> 1 </td>
-                            <td> 9 </td>
-                            <td> 9 </td>
+                            <td>1.</td>
+                            <td><span id="group-table-team-1"></span></td>
+                            <td><span id="group-table-foalsFor-1"></span></td>
+                            <td><span id="group-table-goalsAgainst-1"></span>  </td>
+                            <td><span id="group-table-goalDiff-1"></span> </td>
+                            <td><span id="group-table-points-1"></span> </td>
+                        </tr>
+                        <tr>
+                            <td>2.</td>
+                            <td><span id="group-table-team-2"></span></td>
+                            <td><span id="group-table-foalsFor-2"></span></td>
+                            <td><span id="group-table-goalsAgainst-2"></span>  </td>
+                            <td><span id="group-table-goalDiff-2"></span> </td>
+                            <td><span id="group-table-points-2"></span> </td>
+                        </tr>
+                        <tr>
+                            <td>3.</td>
+                            <td><span id="group-table-team-3"></span></td>
+                            <td><span id="group-table-foalsFor-3"></span></td>
+                            <td><span id="group-table-goalsAgainst-3"></span>  </td>
+                            <td><span id="group-table-goalDiff-3"></span> </td>
+                            <td><span id="group-table-points-3"></span> </td>
+                        </tr>
+                        <tr>
+                            <td>4.</td>
+                            <td><span id="group-table-team-4"></span></td>
+                            <td><span id="group-table-foalsFor-4"></span></td>
+                            <td><span id="group-table-goalsAgainst-4"></span>  </td>
+                            <td><span id="group-table-goalDiff-4"></span> </td>
+                            <td><span id="group-table-points-4"></span> </td>
                         </tr>
                         </tbody>
                     </table>

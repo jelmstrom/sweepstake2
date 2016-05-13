@@ -140,8 +140,25 @@ var user = {
 
 var group = {
     
-    showGroup : function (){
-        main.makeAjaxCall("")
+    showGroup : function (groupName){
+        console.log("show group " + groupName);
+        main.makeAjaxCall("/rest/group/"+groupName, "GET")
+            .done(function(group){
+
+                var standings = group.standings;
+                for(var i = 0; i < standings.length;  i++) {
+                    var item = standings[i];
+                    console.log(item);
+                    console.log(standings);
+                    $("#group-table-team-"+(i+1)).html(item.team);
+                    if (item.goalsFor) {
+                        $("#group-table-goalsFor-").html(item.goalsFor);
+                        $("#group-table-goalsAgains-"+(i+1)).html(item.goalsAgainst);
+                        $("#group-table-goalDifference-"+(i+1)).html(item.goalsFor - item.goalsAgainst);
+                    }
+                    $("#group-table-points-"+(i+1)).html(item.points);
+                }
+            })
     }
     
 }

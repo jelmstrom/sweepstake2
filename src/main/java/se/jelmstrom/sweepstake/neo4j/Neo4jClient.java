@@ -56,7 +56,7 @@ public class Neo4jClient implements Managed {
             groups.add(D);
             Group E = new Group("E");
             groups.add(E);
-            Group F = new Group("E");
+            Group F = new Group("F");
             groups.add(F);
 
             groups.stream().forEach(stage -> session().save(stage));
