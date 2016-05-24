@@ -5,6 +5,8 @@ import org.neo4j.ogm.annotation.EndNode;
 import org.neo4j.ogm.annotation.RelationshipEntity;
 import org.neo4j.ogm.annotation.StartNode;
 
+import java.util.Objects;
+
 @RelationshipEntity(type = "PREDICTON")
 public class MatchPrediction extends Entity{
     @StartNode
@@ -69,11 +71,24 @@ public class MatchPrediction extends Entity{
         this.awayGoals = awayGoals;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MatchPrediction)) return false;
+        MatchPrediction that = (MatchPrediction) o;
+        return Objects.equals(user, that.user) &&
+                Objects.equals(match, that.match);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, match);
+    }
 
     /*
-    Points for
-     - correct winner (sign of compare  (1,0,-1) is equal)
-     - correct number of goals for each team
+        Points for
+         - correct winner (sign of compare  (1,0,-1) is equal)
+         - correct number of goals for each team
      */
     int score() {
         if(!match.hasResult() || !this.hasResult()){

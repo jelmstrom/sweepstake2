@@ -6,12 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /*
@@ -28,6 +26,10 @@ public class Group extends Entity{
 
     @JsonProperty
     private String groupName;
+
+    @JsonProperty
+    @Relationship(type = "GROUPPREDICTION", direction = Relationship.INCOMING)
+    private Set<GroupPrediction> groupPredictions = new HashSet<>();
 
     public Group() {
     }
@@ -57,6 +59,14 @@ public class Group extends Entity{
         this.matches = matches;
     }
 
+    public Set<GroupPrediction> getGroupPredictions() {
+        return groupPredictions;
+    }
+
+    public boolean addPrediction(GroupPrediction prediction){
+        return groupPredictions.add(prediction);
+    }
+
     @JsonProperty
     public List<TeamRecord> getStandings() {
         List<TeamRecord> recordMap = this.getMatches().stream()
@@ -66,9 +76,29 @@ public class Group extends Entity{
                         , i -> i  // record is value
                         , TeamRecord::merge // merge records with same key
                 )).values().stream() // get the values
-                .sorted().collect(Collectors.toList());  // sort them
+                .sorted().collect(toList());  // sort them
         Collections.reverse(recordMap); // reverse list (since natural order is ascending)
         return recordMap;
     }
 
+
+    public List<String> teams(){
+        return matches.stream()
+                    .flatMap(match -> Arrays.asList(match.getHome(), match.getAway()).stream())
+                    .distinct()
+                    .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Group)) return false;
+        Group group = (Group) o;
+        return  Objects.equals(id, group.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupName,id);
+    }
 }

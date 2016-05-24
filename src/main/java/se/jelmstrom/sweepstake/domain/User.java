@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.neo4j.ogm.annotation.Relationship.OUTGOING;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown=true) // for getPoints()
 public class User extends Entity implements Principal{
@@ -30,12 +32,17 @@ public class User extends Entity implements Principal{
     private String password;
     private boolean isAdmin;
     @JsonProperty
-    @Relationship(type= "PREDICTON", direction= Relationship.OUTGOING)
+    @Relationship(type= "PREDICTON", direction= OUTGOING)
     private Set<MatchPrediction> predictions = new HashSet<>();
 
     @JsonProperty
-    @Relationship(type= "LEAGUE", direction= Relationship.OUTGOING)
+    @Relationship(type= "LEAGUE", direction= OUTGOING)
     private Set<League> leagues = new HashSet<>();
+
+    @JsonProperty
+    @Relationship(type="TABLEPREDICTION", direction= OUTGOING)
+    private Set<GroupPrediction> groupPredictions = new HashSet<>();
+
 
     public User() {
     }
@@ -129,6 +136,18 @@ public class User extends Entity implements Principal{
         this.password = password;
     }
 
+    public Set<GroupPrediction> getGroupPredictions() {
+        return groupPredictions;
+    }
+
+    public boolean addGroupPrediction(GroupPrediction prediction){
+        return groupPredictions.add(prediction);
+    }
+
+    public void setGroupPredictions(Set<GroupPrediction> groupPredictions) {
+        this.groupPredictions = groupPredictions;
+    }
+
     public boolean isAdmin() {
         return isAdmin;
     }
@@ -155,6 +174,9 @@ public class User extends Entity implements Principal{
     }
     @JsonProperty("points")
     public int getPoints() {
-        return predictions.stream().mapToInt(prediction -> prediction.score()).sum();
+        int points = 0;
+        points += predictions.stream().mapToInt(prediction -> prediction.score()).sum();
+        points += groupPredictions.stream().mapToInt(tp -> tp.score()).sum();
+        return points;
     }
 }

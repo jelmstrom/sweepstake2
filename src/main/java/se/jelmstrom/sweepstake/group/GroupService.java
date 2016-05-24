@@ -10,7 +10,7 @@ public class GroupService {
     }
 
     public Group getStage(String stageName){
-        return repo.getStage(stageName);
+        return repo.getGroup(stageName);
     }
 
 }

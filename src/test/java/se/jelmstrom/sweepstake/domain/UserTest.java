@@ -19,7 +19,7 @@ public class UserTest {
     public void testToString() throws Exception {
         String toString = new User("johan", "johan@email.com", 9999L).toString();
         assertThat(toString, is(notNullValue()));
-        assertThat(toString, is(equalTo("{\"id\":9999,\"username\":\"johan\",\"email\":\"johan@email.com\",\"predictions\":[],\"leagues\":[],\"admin\":false,\"points\":0}")));
+        assertThat(toString, is(equalTo("{\"id\":9999,\"username\":\"johan\",\"email\":\"johan@email.com\",\"predictions\":[],\"leagues\":[],\"groupPredictions\":[],\"admin\":false,\"points\":0}")));
     }
 
     @Test

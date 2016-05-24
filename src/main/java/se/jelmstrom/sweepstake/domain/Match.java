@@ -5,10 +5,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.DateLong;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.neo4j.ogm.annotation.Relationship.INCOMING;
@@ -152,5 +149,18 @@ public class Match extends Entity {
                 new TeamRecord(home, homeGoals, awayGoals, homePoints())
                 , new TeamRecord(away, awayGoals, homeGoals, awayPoints())).stream();
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Match)) return false;
+        Match match = (Match) o;
+        return this.id.equals(match.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, home, away, kickoff, group, stage);
     }
 }

@@ -13,6 +13,9 @@ import se.jelmstrom.sweepstake.group.GroupService;
 import se.jelmstrom.sweepstake.league.LeagueRepository;
 import se.jelmstrom.sweepstake.league.LeagueResource;
 import se.jelmstrom.sweepstake.league.LeagueService;
+import se.jelmstrom.sweepstake.match.MatchResource;
+import se.jelmstrom.sweepstake.match.MatchService;
+import se.jelmstrom.sweepstake.match.NeoMatchRepo;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 import se.jelmstrom.sweepstake.neo4j.NeoConfigHealthCheck;
 import se.jelmstrom.sweepstake.user.NeoUserRepository;
@@ -34,11 +37,13 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
         environment.jersey().register(new UserResource(new UserService(userRepository)));
         environment.jersey().register(new LeagueResource(userRepository, new LeagueService(new LeagueRepository(neo4jClient), userRepository)));
         environment.jersey().register(new GroupResource(new GroupService(new GroupRepository(neo4jClient))));
+        NeoMatchRepo repo = new NeoMatchRepo(neo4jClient);
+        environment.jersey().register(new MatchResource(repo, new MatchService(repo)));
 
 
         Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
-        filter.setInitParameter("allowedOrigins", "http://localhost:63343");
+        filter.setInitParameter("allowedOrigins", "http://localhost:63342");
         filter.setInitParameter("allowedHeaders", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,Access-Control-Request-Method,Access-Control-Allow-Origin");
         filter.setInitParameter("allowedMethods", "GET,PUT,POST,DELETE,OPTIONS");
         filter.setInitParameter("preflightMaxAge", "5184000"); // 2 months

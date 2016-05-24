@@ -14,7 +14,9 @@ import se.jelmstrom.sweepstake.application.NeoConfiguration;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthorizer;
 import se.jelmstrom.sweepstake.domain.Group;
+import se.jelmstrom.sweepstake.domain.GroupPrediction;
 import se.jelmstrom.sweepstake.domain.TeamRecord;
+import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 import se.jelmstrom.sweepstake.user.NeoUserRepository;
 
@@ -60,7 +62,7 @@ public class GroupResourceTest {
 
     @Test
     public void shouldLoadGroupA() throws IOException {
-        Group group = repo.getStage("A");
+        Group group = repo.getGroup("A");
         group.getMatches().forEach(match -> {
             match.setAwayGoals(0);
             match.setHomeGoals(1);
@@ -86,6 +88,35 @@ public class GroupResourceTest {
         assertThat(recordMap.get(3).getTeam(), is("Switzerland"));
     }
 
+
+
+    @Test
+    public void userPredictionsStored(){
+        User user = new User("test_user", "test_user@email.com", null, "aPassword");
+        GroupRepository groupRepo = new GroupRepository(neoClient);
+        Group group =   groupRepo.getGroup("A");
+        GroupPrediction prediction = new GroupPrediction(group, user, group.teams().toArray(new String[4]));
+        user.addGroupPrediction(prediction);
+        userRepo.saveUser(user, 2);
+
+        User stored = userRepo.findUsers(user).iterator().next();
+        assertThat(stored.getGroupPredictions().size(), is(1));
+        assertThat(stored.getGroupPredictions().contains(prediction), is(true));
+    }
+
+
+    @Test
+    public void scoresTablePrediction(){
+        User user = new User("test_user", "test_user@email.com", null, "aPassword");
+        GroupRepository groupRepo = new GroupRepository(neoClient);
+        Group group =   groupRepo.getGroup("A");
+        List<String> teams = group.teams();
+        teams.sort(String::compareTo);
+        GroupPrediction prediction = new GroupPrediction(group, user, teams.toArray(new String[4]));
+        user.addGroupPrediction(prediction);
+        group.getMatches().forEach(match -> {match.setAwayGoals(0); match.setHomeGoals(1);});
+        assertThat(user.getPoints(), is(1));
+    }
 
 
 }

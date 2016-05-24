@@ -55,14 +55,14 @@ public class LeagueResourceTest {
     private Group group;
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         Session session = neoClient.session();
         session.delete(userRepo.getUserById(user.getId()).getLeagues().iterator().next());
         session.delete(user);
-        if(group != null){
+        if (group != null) {
             session.delete(group);
         }
-        if(match != null){
+        if (match != null) {
             session.delete(match);
         }
         userRepo.findUsers(user).forEach(session::delete); // any lingering users
@@ -70,7 +70,7 @@ public class LeagueResourceTest {
     }
 
     @Test
-    public void createsLeague(){
+    public void createsLeague() {
         user = new User("test_user", "test_user@email.com", null, "aPassword");
         userRepo.saveUser(user);
 
@@ -84,7 +84,7 @@ public class LeagueResourceTest {
     }
 
     @Test
-    public void joinLeagueAddsToUsersLeagues(){
+    public void joinLeagueAddsToUsersLeagues() {
         user = new User("test_user", "test_user@email.com", null, "aPassword");
         userRepo.saveUser(user);
         League league = new League(new HashSet<>(), "TestLeague");
@@ -117,7 +117,7 @@ public class LeagueResourceTest {
         neoClient.session().save(league);
 
 
-        Response response = resources.client().target("/league/"+league.getId()+"/leaderboard")
+        Response response = resources.client().target("/league/" + league.getId() + "/leaderboard")
                 .request()
                 .header("Authorization", "Basic dGVzdF91c2VyOmFQYXNzd29yZA")
                 .get();
@@ -137,5 +137,7 @@ public class LeagueResourceTest {
         ObjectMapper objectMapper = new ObjectMapper();
         List<User> value = objectMapper.readValue(bodyString, objectMapper.getTypeFactory().constructCollectionType(List.class, User.class));
         return value;
-        };
+    }
+
+
 }

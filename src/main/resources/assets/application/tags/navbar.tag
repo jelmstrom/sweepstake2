@@ -48,5 +48,9 @@
             <!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
-
+    <script>
+        this.on('mount', function(){
+            menu.init();
+        })
+    </script>
 </navbar>

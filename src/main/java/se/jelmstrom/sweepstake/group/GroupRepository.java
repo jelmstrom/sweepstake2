@@ -14,7 +14,7 @@ public class GroupRepository {
     }
 
 
-    public Group getStage(String groupName){
+    public Group getGroup(String groupName){
         String query = "MATCH (group:Group)-[:GROUP]-(match:Match) where group.groupName = {group_name} RETURN group, match";
         Map<String, String> parameters = new HashMap<>();
         parameters.put("group_name", groupName);

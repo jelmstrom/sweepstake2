@@ -13,25 +13,15 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toSet;
 
-public class NeoUserRepository {
-    private final Neo4jClient oClient;
+public class NeoUserRepository extends NeoRepository {
 
     public NeoUserRepository(Neo4jClient oClient) {
-        this.oClient = oClient;
+        super(oClient);
     }
 
 
     public User saveUser(User user){
-        Session session = oClient.session();
-        Transaction transaction = session.beginTransaction();
-        try {
-            user.setPassword(encryptPassword(user.getPassword()));
-            session.save(user, 1);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("can not encrypt passwords to store in DB");
-        }
-        transaction.commit();
-        return user;
+        return saveUser(user, 1);
     }
 
     public Set<User> findUsers(User user) {
@@ -39,24 +29,24 @@ public class NeoUserRepository {
         Map<String, String> parameters = new HashMap();
         parameters.put("username", user.getUsername());
         parameters.put("email", user.getEmail());
-        Iterable<User> results = oClient.session().query(
+        Iterable<User> results = neo4jClient.session().query(
                 User.class
                 , "MATCH (u) WHERE u.username = {username} OR u.email = {email} RETURN u"
                 , parameters);
 
-        return StreamSupport.stream(results.spliterator(), true).collect(toSet());
+        return StreamSupport.stream(results.spliterator(), true).map(u -> getUserById(u.getId())).collect(toSet());
 
 
     }
 
 
     public User getUserById(Long id){
-       return oClient.session().load(User.class, id, 3);
+       return neo4jClient.session().load(User.class, id, 3);
     }
 
     public boolean deleteUser(Long id){
-        Transaction transaction = oClient.session().beginTransaction();
-        oClient.session().delete(getUserById(id));
+        Transaction transaction = neo4jClient.session().beginTransaction();
+        neo4jClient.session().delete(getUserById(id));
         return true;
     }
 
@@ -65,11 +55,11 @@ public class NeoUserRepository {
             Map<String, String> parameters = new HashMap();
             parameters.put("username", username);
             parameters.put("password", encryptPassword(password));
-            User user = oClient.session().queryForObject(
+            User user = neo4jClient.session().queryForObject(
                     User.class
                     , "MATCH (u) where u.username = {username} AND u.password = {password} RETURN u"
                     , parameters);
-            return user == null?new User():oClient.session().load(User.class, user.getId(), 3);
+            return user == null?new User(): neo4jClient.session().load(User.class, user.getId(), 3);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Use proper Encryption algorithm");
         }
@@ -79,4 +69,13 @@ public class NeoUserRepository {
         return password;
     }
 
+    public User saveUser(User user, int depth) {
+        Session session = neo4jClient.session();
+        try {
+            user.setPassword(encryptPassword(user.getPassword()));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("can not encrypt passwords to store in DB");
+        }
+        return super.saveEntity(user, depth);
+    }
 }

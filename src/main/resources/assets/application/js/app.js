@@ -6,9 +6,13 @@ var main = {
         $("#tag-register").hide();
         $("#tag-user").hide();
         $("#userdetails-leaderboard").hide();
+        $("#tag-group").hide();
     },
     user : function(){
         return main.session.get("user");
+    },
+    group : function(){
+        return main.session.get("group");
     },
     hideAlerts : function(){
         $("#alert-info").hide();
@@ -78,7 +82,9 @@ var menu = {
         $("#menu-register").hide();
     },
     init : function(){
+        console.log("menu init");
         $("#menu-register").on("click", function() {
+                console.log("clicked");
                 main.hideAllTags();
                 $("#div-register").show();
                 $("#tag-register").show();
@@ -141,23 +147,37 @@ var user = {
 var group = {
     
     showGroup : function (groupName){
+        main.hideAllTags();
+        $("#tag-group").show();
         console.log("show group " + groupName);
         main.makeAjaxCall("/rest/group/"+groupName, "GET")
             .done(function(group){
-
+                main.session.set("group", group);
                 var standings = group.standings;
                 for(var i = 0; i < standings.length;  i++) {
                     var item = standings[i];
                     console.log(item);
                     console.log(standings);
-                    $("#group-table-team-"+(i+1)).html(item.team);
+                    $("#group-table-team-"+(i)).html(item.team);
                     if (item.goalsFor) {
-                        $("#group-table-goalsFor-").html(item.goalsFor);
-                        $("#group-table-goalsAgains-"+(i+1)).html(item.goalsAgainst);
-                        $("#group-table-goalDifference-"+(i+1)).html(item.goalsFor - item.goalsAgainst);
+                        $("#group-table-goalsFor-"+(i)).html(item.goalsFor);
+                        $("#group-table-goalsAgains-"+(i)).html(item.goalsAgainst);
+                        $("#group-table-goalDifference-"+(i)).html(item.goalsFor - item.goalsAgainst);
                     }
-                    $("#group-table-points-"+(i+1)).html(item.points);
+
+
+                    $("#group-table-points-"+(i)).html(item.points);
                 }
+
+                for(var m = 0; m < group.matches.length; m++){
+                    var match = group.matches[m];
+                    $("#group-match-date-"+(m)).html($.format.date(new Date(match.kickoff), 'dd MMM HH:mm'));
+                    $("#group-match-home-"+(m)).html(match.home);
+                    $("#group-match-away-"+(m)).html(match.away);
+                    $("#group-match-homeGoals-"+(m)).val(0);
+                    $("#group-match-awayGoals-"+(m)).val(0);
+                }
+
             })
     }
     
