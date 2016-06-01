@@ -1,6 +1,5 @@
 package se.jelmstrom.sweepstake.group;
 
-import com.sun.org.apache.xerces.internal.util.Status;
 import se.jelmstrom.sweepstake.domain.Group;
 import se.jelmstrom.sweepstake.domain.GroupPrediction;
 import se.jelmstrom.sweepstake.domain.User;
@@ -39,7 +38,7 @@ public class GroupResource {
     public Response predictGroup(@Context SecurityContext context, @Valid GroupPrediction prediction){
         User u = (User) context.getUserPrincipal();
         if(u.getId() != prediction.getUser().getId()){
-            Response.status(Status.NOT_ALLOWED.getType()).build();
+            Response.status(401).build();
         }
         User userById = userService.getUserById(u.getId());
         service.storePrediction(prediction, userById);
