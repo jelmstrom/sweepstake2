@@ -107,6 +107,10 @@ public class MatchPrediction extends Entity{
         return points;
     }
 
+    public String ofGroupName(){
+        return match.getGroup().getGroupName();
+    }
+
     private boolean hasResult() {
         return homeGoals != null && awayGoals != null;
     }

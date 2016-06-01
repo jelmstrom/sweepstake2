@@ -6,7 +6,6 @@ import se.jelmstrom.sweepstake.domain.MatchPrediction;
 import se.jelmstrom.sweepstake.domain.User;
 
 import javax.annotation.security.RolesAllowed;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -24,18 +23,16 @@ import static java.util.stream.Collectors.toList;
 @Consumes(MediaType.APPLICATION_JSON)
 public class MatchResource {
     private static final Logger log = LoggerFactory.getLogger(MatchResource.class);
-    private final NeoMatchRepo repo;
     private final MatchService service;
 
-    public MatchResource(NeoMatchRepo repo, MatchService service) {
-        this.repo = repo;
+    public MatchResource(MatchService service) {
         this.service = service;
     }
 
     @RolesAllowed("USER")
     @POST
     @Path("/predictions")
-    public Response submitPreditcions(@Context SecurityContext context, @Valid List<MatchPrediction> predictions){
+    public Response submitPreditcions(@Context SecurityContext context, List<MatchPrediction> predictions){
 
         User user = (User) context.getUserPrincipal();
         List<MatchPrediction> collect = predictions.stream().filter(pred -> !pred.getUser().equals(user)).collect(toList());

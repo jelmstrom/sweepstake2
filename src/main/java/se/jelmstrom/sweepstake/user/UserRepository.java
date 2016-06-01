@@ -13,9 +13,9 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toSet;
 
-public class NeoUserRepository extends NeoRepository {
+public class UserRepository extends NeoRepository {
 
-    public NeoUserRepository(Neo4jClient oClient) {
+    public UserRepository(Neo4jClient oClient) {
         super(oClient);
     }
 
@@ -41,7 +41,7 @@ public class NeoUserRepository extends NeoRepository {
 
 
     public User getUserById(Long id){
-       return neo4jClient.session().load(User.class, id, 3);
+        return super.loadEntity(User.class, id, 3);
     }
 
     public boolean deleteUser(Long id){
@@ -59,7 +59,7 @@ public class NeoUserRepository extends NeoRepository {
                     User.class
                     , "MATCH (u) where u.username = {username} AND u.password = {password} RETURN u"
                     , parameters);
-            return user == null?new User(): neo4jClient.session().load(User.class, user.getId(), 3);
+            return user == null?new User(): getUserById(user.getId(), 1);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Use proper Encryption algorithm");
         }
@@ -77,5 +77,9 @@ public class NeoUserRepository extends NeoRepository {
             throw new RuntimeException("can not encrypt passwords to store in DB");
         }
         return super.saveEntity(user, depth);
+    }
+
+    public User getUserById(Long id, int depth) {
+        return super.loadEntity(User.class, id, depth);
     }
 }

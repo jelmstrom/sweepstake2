@@ -10,14 +10,14 @@ import io.dropwizard.setup.Environment;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import se.jelmstrom.sweepstake.application.SweepstakeConfiguration;
 import se.jelmstrom.sweepstake.domain.User;
-import se.jelmstrom.sweepstake.user.NeoUserRepository;
+import se.jelmstrom.sweepstake.user.UserRepository;
 
 import java.security.Principal;
 
 public class UserAuthenticator implements Authenticator<BasicCredentials, Principal> {
-    private final NeoUserRepository userRepo;
+    private final UserRepository userRepo;
 
-    public UserAuthenticator(NeoUserRepository userRepo) {
+    public UserAuthenticator(UserRepository userRepo) {
         this.userRepo = userRepo;
     }
 
@@ -34,7 +34,7 @@ public class UserAuthenticator implements Authenticator<BasicCredentials, Princi
     }
 
 
-    public static void register(Environment environment, SweepstakeConfiguration config, NeoUserRepository repo) {
+    public static void register(Environment environment, SweepstakeConfiguration config, UserRepository repo) {
 
         BasicCredentialAuthFilter<Principal> filter = new BasicCredentialAuthFilter.Builder<>()
                 .setAuthenticator(new UserAuthenticator(repo))

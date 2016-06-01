@@ -34,6 +34,7 @@ var main = {
             var msgBody;
             if(data){
                 msgBody=JSON.stringify(data);
+                console.log(msgBody);
             }
             url = main.buildUrl(url);
             var userName;
@@ -83,6 +84,11 @@ var menu = {
     },
     init : function(){
         console.log("menu init");
+        if(main.user()){
+            menu.userLoggedIn();
+        } else {
+            menu.userLoggedOut();
+        }
         $("#menu-register").on("click", function() {
                 console.log("clicked");
                 main.hideAllTags();
@@ -145,41 +151,72 @@ var user = {
 };
 
 var group = {
-    
+
+    userPrediction : function(matchId, predictions) {
+        console.log('prediction for ' + matchId);
+        for (pred in predictions) {
+            var item = predictions[pred];
+            console.log(item);
+
+            if(matchId == item.match.id){
+                console.log("match!");
+                return item;
+            }
+        }
+
+    },
     showGroup : function (groupName){
         main.hideAllTags();
         $("#tag-group").show();
         console.log("show group " + groupName);
         main.makeAjaxCall("/rest/group/"+groupName, "GET")
-            .done(function(group){
-                main.session.set("group", group);
-                var standings = group.standings;
-                for(var i = 0; i < standings.length;  i++) {
-                    var item = standings[i];
-                    console.log(item);
-                    console.log(standings);
-                    $("#group-table-team-"+(i)).html(item.team);
-                    if (item.goalsFor) {
-                        $("#group-table-goalsFor-"+(i)).html(item.goalsFor);
-                        $("#group-table-goalsAgains-"+(i)).html(item.goalsAgainst);
-                        $("#group-table-goalDifference-"+(i)).html(item.goalsFor - item.goalsAgainst);
+            .done(function(groupResponse){
+                var predictions = [];
+                main.makeAjaxCall("/rest/user/prediction/"+groupName, "GET")
+                    .done(function(response){
+                        console.log(response);
+                        predictions = response;
+
+                    main.session.set("group", groupResponse);
+                    var standings = groupResponse.standings;
+                    for(var i = 0; i < standings.length;  i++) {
+                        var item = standings[i];
+                        console.log(item);
+                        console.log(standings);
+                        $("#group-table-team-"+(i)).html(item.team);
+                        if (item.goalsFor) {
+                            $("#group-table-goalsFor-"+(i)).html(item.goalsFor);
+                            $("#group-table-goalsAgains-"+(i)).html(item.goalsAgainst);
+                            $("#group-table-goalDifference-"+(i)).html(item.goalsFor - item.goalsAgainst);
+                        }
+
+
+                        $("#group-table-points-"+(i)).html(item.points);
                     }
 
+                    for(var m = 0; m < groupResponse.matches.length; m++){
+                        var match = groupResponse.matches[m];
+                        $("#group-match-date-"+(m)).html($.format.date(new Date(match.kickoff), 'dd MMM HH:mm'));
+                        $("#group-match-home-"+(m)).html(match.home);
+                        $("#group-match-away-"+(m)).html(match.away);
 
-                    $("#group-table-points-"+(i)).html(item.points);
-                }
+                        var predicion = group.userPrediction(match.id, predictions);
+                        if(predicion){
+                            $("#homeGoals"+(m)).val(predicion.homeGoals);
+                            $("#awayGoals"+(m)).val(predicion.awayGoals);
+                        } else {
+                            console.log("no prediction");
+                            $("#homeGoals"+(m)).val("");
+                            $("#awayGoals"+(m)).val("");
 
-                for(var m = 0; m < group.matches.length; m++){
-                    var match = group.matches[m];
-                    $("#group-match-date-"+(m)).html($.format.date(new Date(match.kickoff), 'dd MMM HH:mm'));
-                    $("#group-match-home-"+(m)).html(match.home);
-                    $("#group-match-away-"+(m)).html(match.away);
-                    $("#group-match-homeGoals-"+(m)).val(0);
-                    $("#group-match-awayGoals-"+(m)).val(0);
-                }
+                        }
+
+                    }
+                });
 
             })
     }
+
     
 }
 

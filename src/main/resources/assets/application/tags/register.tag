@@ -61,6 +61,7 @@
             console.log(user);
             main.makeAjaxCall('/rest/user/login', 'POST', user)
                     .done(function(response){
+                        console.log(user);
                         main.session.set("user", response);
                         main.session.set("password", user.password);
                         $("#tag-register").hide();

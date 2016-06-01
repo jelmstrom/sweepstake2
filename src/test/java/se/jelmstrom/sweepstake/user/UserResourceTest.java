@@ -36,7 +36,7 @@ public class UserResourceTest {
             , "local"
             , "neo4j");
     private static final Neo4jClient neoClient = new Neo4jClient(config);
-    private static final NeoUserRepository userRepo = new NeoUserRepository(neoClient);
+    private static final UserRepository userRepo = new UserRepository(neoClient);
     private static final UserService userService= new UserService(userRepo);
 
     @ClassRule

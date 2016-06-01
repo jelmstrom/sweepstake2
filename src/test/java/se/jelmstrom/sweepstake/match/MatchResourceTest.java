@@ -1,5 +1,7 @@
 package se.jelmstrom.sweepstake.match;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
@@ -18,7 +20,7 @@ import se.jelmstrom.sweepstake.domain.MatchPrediction;
 import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.group.GroupRepository;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
-import se.jelmstrom.sweepstake.user.NeoUserRepository;
+import se.jelmstrom.sweepstake.user.UserRepository;
 import se.jelmstrom.sweepstake.user.UserResource;
 import se.jelmstrom.sweepstake.user.UserService;
 
@@ -40,7 +42,7 @@ public class MatchResourceTest {
     private static final Neo4jClient neoClient = new Neo4jClient(config);
     private static final NeoMatchRepo matchRepo = new NeoMatchRepo(neoClient);
 
-    private static NeoUserRepository userRepo = new NeoUserRepository(neoClient);
+    private static UserRepository userRepo = new UserRepository(neoClient);
     private static UserService userService = new UserService(userRepo);
 
     private static final GroupRepository repo = new GroupRepository(neoClient);
@@ -54,7 +56,7 @@ public class MatchResourceTest {
             .addProvider(RolesAllowedDynamicFeature.class)
             .addProvider(new AuthValueFactoryProvider.Binder<>(Principal.class))
             .addResource(new UserResource(userService))
-            .addResource(new MatchResource(matchRepo, new MatchService(matchRepo)))
+            .addResource(new MatchResource(new MatchService(matchRepo)))
             .build();
     private User user;
 
@@ -123,7 +125,7 @@ public class MatchResourceTest {
     }
 
     @Test
-    public void submitPredictsionsUpdatesExisting(){
+    public void submitPredictsionsUpdatesExisting() throws JsonProcessingException {
         user = new User("test_user", "test_user@email.com", null, "aPassword");
         Group g = repo.getGroup("A");
         g.getMatches().forEach(match -> user.addPrediction(new MatchPrediction(null, user, match, 0, 1)));
@@ -140,11 +142,15 @@ public class MatchResourceTest {
         List<MatchPrediction> predictions = new ArrayList<>();
         g.getMatches().forEach(match -> predictions.add(new MatchPrediction(null, user, match, 1, 0)));
         user.getPredictions().addAll(predictions);
+        Entity<List<MatchPrediction>> json = Entity.json(predictions);
+
+        String mapper =  new ObjectMapper().writeValueAsString(predictions);
+        System.out.println(mapper);
+
         Response res = resources.client().target("/match/predictions").request()
                 .header("Authorization", "Basic dGVzdF91c2VyOmFQYXNzd29yZA")
-                .post(Entity.json(predictions));
+                .post(json);
         Object entity = res.getEntity();
-        System.out.println(entity.toString());
         assertThat(res.getStatus(), is(200));
         Set<MatchPrediction> updatedPredictions = matchRepo.predictionsFor(user);
         assertThat(updatedPredictions.size(), is(6));

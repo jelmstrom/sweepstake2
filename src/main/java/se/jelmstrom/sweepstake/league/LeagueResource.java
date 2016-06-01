@@ -2,7 +2,7 @@ package se.jelmstrom.sweepstake.league;
 
 import se.jelmstrom.sweepstake.domain.League;
 import se.jelmstrom.sweepstake.domain.User;
-import se.jelmstrom.sweepstake.user.NeoUserRepository;
+import se.jelmstrom.sweepstake.user.UserRepository;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -14,10 +14,10 @@ import java.util.Set;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class LeagueResource {
-    private final NeoUserRepository repo;
+    private final UserRepository repo;
     private final LeagueService service;
 
-    public LeagueResource(NeoUserRepository repo, LeagueService service) {
+    public LeagueResource(UserRepository repo, LeagueService service) {
         this.repo = repo;
         this.service = service;
     }

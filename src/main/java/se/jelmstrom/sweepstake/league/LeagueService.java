@@ -2,15 +2,15 @@ package se.jelmstrom.sweepstake.league;
 
 import se.jelmstrom.sweepstake.domain.League;
 import se.jelmstrom.sweepstake.domain.User;
-import se.jelmstrom.sweepstake.user.NeoUserRepository;
+import se.jelmstrom.sweepstake.user.UserRepository;
 
 import java.util.Set;
 
 public class LeagueService {
     private final LeagueRepository repo;
-    private final NeoUserRepository userRepo;
+    private final UserRepository userRepo;
 
-    public LeagueService(LeagueRepository repo, NeoUserRepository userRepo) {
+    public LeagueService(LeagueRepository repo, UserRepository userRepo) {
         this.repo = repo;
         this.userRepo = userRepo;
     }

@@ -67,6 +67,14 @@ public class Group extends Entity{
         return groupPredictions.add(prediction);
     }
 
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
     @JsonProperty
     public List<TeamRecord> getStandings() {
         List<TeamRecord> recordMap = this.getMatches().stream()

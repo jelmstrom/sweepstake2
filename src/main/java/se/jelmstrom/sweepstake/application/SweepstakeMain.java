@@ -5,6 +5,10 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.swagger.config.ScannerFactory;
+import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.jaxrs.config.DefaultJaxrsScanner;
+import io.swagger.jersey.listing.ApiListingResourceJSON;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
 import se.jelmstrom.sweepstake.group.GroupRepository;
@@ -18,7 +22,7 @@ import se.jelmstrom.sweepstake.match.MatchService;
 import se.jelmstrom.sweepstake.match.NeoMatchRepo;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 import se.jelmstrom.sweepstake.neo4j.NeoConfigHealthCheck;
-import se.jelmstrom.sweepstake.user.NeoUserRepository;
+import se.jelmstrom.sweepstake.user.UserRepository;
 import se.jelmstrom.sweepstake.user.UserResource;
 import se.jelmstrom.sweepstake.user.UserService;
 
@@ -33,12 +37,18 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
         Neo4jClient neo4jClient = new Neo4jClient(config.getNeoConfiguration());
         environment.lifecycle().manage(neo4jClient);
 
-        NeoUserRepository userRepository = new NeoUserRepository(neo4jClient);
-        environment.jersey().register(new UserResource(new UserService(userRepository)));
-        environment.jersey().register(new LeagueResource(userRepository, new LeagueService(new LeagueRepository(neo4jClient), userRepository)));
-        environment.jersey().register(new GroupResource(new GroupService(new GroupRepository(neo4jClient))));
+        UserRepository userRepository = new UserRepository(neo4jClient);
+        UserService userService = new UserService(userRepository);
+        environment.jersey().register(new UserResource(userService));
+        LeagueRepository leagueRepository = new LeagueRepository(neo4jClient);
+        LeagueService leagueService = new LeagueService(leagueRepository, userRepository);
+        environment.jersey().register(new LeagueResource(userRepository, leagueService));
+        GroupService groupService = new GroupService(new GroupRepository(neo4jClient));
+        environment.jersey().register(new GroupResource(groupService, userService));
         NeoMatchRepo repo = new NeoMatchRepo(neo4jClient);
-        environment.jersey().register(new MatchResource(repo, new MatchService(repo)));
+        MatchService service = new MatchService(repo);
+        environment.jersey().register(new MatchResource(service));
+        configureSwagger(environment);
 
 
         Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
@@ -53,10 +63,26 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
         environment.healthChecks().register("neo4j", new NeoConfigHealthCheck(neo4jClient));
     }
 
+    void configureSwagger(Environment environment) {
+
+        environment.jersey().register(new ApiListingResourceJSON());
+        ScannerFactory.setScanner(new DefaultJaxrsScanner());
+
+        BeanConfig beanConfig = new BeanConfig();
+        beanConfig.setResourcePackage("se.jelmstrom.sweepstake");
+        beanConfig.setTitle("Sweepstake");
+        beanConfig.setSchemes(new String[]{"http"});
+        beanConfig.setHost("localhost:8081");
+        beanConfig.setBasePath("/rest");
+        beanConfig.setScan(true);
+
+    }
+
 
     @Override
     public void initialize(Bootstrap<SweepstakeConfiguration> bootstrap) {
-        bootstrap.addBundle(new AssetsBundle("/assets/application", "/", null, "app"));
+        bootstrap.addBundle(new AssetsBundle("/assets/application", "/app", null, "app"));
+        bootstrap.addBundle(new AssetsBundle("/assets/swagger", "/swagger", null, "swagger"));
         bootstrap.addBundle(new MultiPartBundle());
     }
 

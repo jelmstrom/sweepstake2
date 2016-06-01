@@ -1,5 +1,6 @@
 package se.jelmstrom.sweepstake.group;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
@@ -18,14 +19,20 @@ import se.jelmstrom.sweepstake.domain.GroupPrediction;
 import se.jelmstrom.sweepstake.domain.TeamRecord;
 import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
-import se.jelmstrom.sweepstake.user.NeoUserRepository;
+import se.jelmstrom.sweepstake.user.UserRepository;
+import se.jelmstrom.sweepstake.user.UserService;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -35,9 +42,9 @@ public class GroupResourceTest {
             , "local"
             , "neo4j");
     private static final Neo4jClient neoClient = new Neo4jClient(config);
-    private static final NeoUserRepository matchRepo = new NeoUserRepository(neoClient);
+    private static final UserRepository matchRepo = new UserRepository(neoClient);
 
-    private static NeoUserRepository userRepo = new NeoUserRepository(neoClient);
+    private static final UserRepository userRepo = new UserRepository(neoClient);
     private static final GroupRepository repo = new GroupRepository(neoClient);
     @ClassRule
     public static final ResourceTestRule rule = ResourceTestRule.builder()
@@ -48,7 +55,7 @@ public class GroupResourceTest {
                     .buildAuthFilter()))
             .addProvider(RolesAllowedDynamicFeature.class)
             .addProvider(new AuthValueFactoryProvider.Binder<>(Principal.class))
-            .addResource(new GroupResource(new GroupService(repo)))
+            .addResource(new GroupResource(new GroupService(repo), new UserService(userRepo)))
             .build();
 
     @Before
@@ -88,8 +95,6 @@ public class GroupResourceTest {
         assertThat(recordMap.get(3).getTeam(), is("Switzerland"));
     }
 
-
-
     @Test
     public void userPredictionsStored(){
         User user = new User("test_user", "test_user@email.com", null, "aPassword");
@@ -104,7 +109,6 @@ public class GroupResourceTest {
         assertThat(stored.getGroupPredictions().contains(prediction), is(true));
     }
 
-
     @Test
     public void scoresTablePrediction(){
         User user = new User("test_user", "test_user@email.com", null, "aPassword");
@@ -116,6 +120,35 @@ public class GroupResourceTest {
         user.addGroupPrediction(prediction);
         group.getMatches().forEach(match -> {match.setAwayGoals(0); match.setHomeGoals(1);});
         assertThat(user.getPoints(), is(1));
+    }
+
+    @Test
+    public void submitUserPredictions() throws JsonProcessingException {
+        User user = new User("test_user", "test_user@email.com", null, "aPassword");
+        GroupRepository groupRepo = new GroupRepository(neoClient);
+        Group group =   groupRepo.getGroup("A");
+        String[] positions = group.teams().toArray(new String[4]);
+        GroupPrediction prediction = new GroupPrediction(group, user, positions);
+        user.addGroupPrediction(prediction);
+        userRepo.saveUser(user);
+
+        List<String> list = Arrays.asList(prediction.getPositions());
+        Collections.reverse(list);
+        prediction.setPositions(list.toArray(new String[4]));
+        Entity<GroupPrediction> entity = Entity.json(prediction);
+        Response response = rule.client().target("/group/prediction/"+user.getId()).request()
+                .header("Authorization", "Basic dGVzdF91c2VyOmFQYXNzd29yZA")
+                .post(entity);
+
+        User stored = userRepo.getUserById(user.getId());
+        assertThat(response.getStatus(), is(200));
+        Set<GroupPrediction> groupPredictions = stored.getGroupPredictions();
+        assertThat(groupPredictions.size(), is(1));
+        GroupPrediction storedPred = groupPredictions.iterator().next();
+        assertThat(storedPred.getPositions()[0], is(equalTo(prediction.getPositions()[3])));
+        assertThat(storedPred.getPositions()[1], is(equalTo(prediction.getPositions()[2])));
+        assertThat(storedPred.getPositions()[2], is(equalTo(prediction.getPositions()[1])));
+        assertThat(storedPred.getPositions()[3], is(equalTo(prediction.getPositions()[0])));
     }
 
 

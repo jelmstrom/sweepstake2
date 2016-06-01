@@ -94,8 +94,7 @@ dependencies {
     compile group: 'io.dropwizard', name: 'dropwizard-assets', version: dropwizardVersion
     compile group: 'io.dropwizard', name: 'dropwizard-forms', version: dropwizardVersion
     compile group: 'io.dropwizard', name: 'dropwizard-auth', version: dropwizardVersion
-
-    compile group: 'io.swagger', name: 'swagger-jersey2-jaxrs', version: '1.5.3'
+    compile group: 'io.swagger',    name: 'swagger-jersey2-jaxrs', version: '1.5.3'
 
     compile 'org.neo4j:neo4j-ogm-core:2.0.1'
     compile 'org.neo4j:neo4j-ogm-http-driver:2.0.1'

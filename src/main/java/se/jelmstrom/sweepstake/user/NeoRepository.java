@@ -16,4 +16,10 @@ public class NeoRepository {
     }
 
 
+    protected <T> T loadEntity(Class<T> e, Long id, int depth){
+        return neo4jClient.session().load(e, id, depth );
+
+    }
+
+
 }

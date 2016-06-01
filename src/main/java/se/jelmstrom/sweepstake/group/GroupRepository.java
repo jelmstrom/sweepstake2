@@ -1,6 +1,9 @@
 package se.jelmstrom.sweepstake.group;
 
+import org.neo4j.ogm.session.Session;
 import se.jelmstrom.sweepstake.domain.Group;
+import se.jelmstrom.sweepstake.domain.GroupPrediction;
+import se.jelmstrom.sweepstake.domain.User;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
 
 import java.util.HashMap;
@@ -26,5 +29,10 @@ public class GroupRepository {
     public Group saveMatches(Group group) {
         neoClient.session().save(group);
         return neoClient.session().load(Group.class, group.getId(), 1);
+    }
+
+    public void storePrediction(GroupPrediction prediction) {
+        Session session = neoClient.session();
+        session.load(User.class, prediction.getUser().getId());
     }
 }

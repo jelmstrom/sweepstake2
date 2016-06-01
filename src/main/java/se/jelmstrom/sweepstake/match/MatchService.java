@@ -26,11 +26,12 @@ public class MatchService {
     }
 
     private void updatePrediction(Set<MatchPrediction>stored, MatchPrediction updated) {
-        Optional<MatchPrediction> first = stored.stream().filter(item -> item.equals(updated)).findFirst();
-        if(first.isPresent()){
-            MatchPrediction matchPrediction = first.get();
+        Optional<MatchPrediction> storedPrediction = stored.stream().filter(item -> item.equals(updated)).findFirst();
+        if(storedPrediction.isPresent()){
+            MatchPrediction matchPrediction = storedPrediction.get();
                matchPrediction.setAwayGoals(updated.getAwayGoals());
                matchPrediction.setHomeGoals(updated.getHomeGoals());
+                matchPrediction.setMatch(updated.getMatch());
            } else { // new prediction
                stored.add(updated);
            }

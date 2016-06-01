@@ -15,7 +15,7 @@ import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthorizer;
 import se.jelmstrom.sweepstake.domain.*;
 import se.jelmstrom.sweepstake.neo4j.Neo4jClient;
-import se.jelmstrom.sweepstake.user.NeoUserRepository;
+import se.jelmstrom.sweepstake.user.UserRepository;
 
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
@@ -36,9 +36,9 @@ public class LeagueResourceTest {
             , "local"
             , "neo4j");
     private static final Neo4jClient neoClient = new Neo4jClient(config);
-    private static final NeoUserRepository matchRepo = new NeoUserRepository(neoClient);
+    private static final UserRepository matchRepo = new UserRepository(neoClient);
 
-    private static NeoUserRepository userRepo = new NeoUserRepository(neoClient);
+    private static UserRepository userRepo = new UserRepository(neoClient);
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
             .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<>()

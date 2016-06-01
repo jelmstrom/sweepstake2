@@ -1,0 +1,160 @@
+[
+  {
+    "id": 887,
+    "user": {
+      "id": 969,
+      "username": "j",
+      "email": "johan.elmstrom@gmail.com",
+      "password": "password",
+      "predictions": [],
+      "leagues": [],
+      "groupPredictions": [],
+      "admin": false,
+      "points": 0
+    },
+    "match": {
+      "id": 933,
+      "home": "France",
+      "away": "Romania",
+      "kickoff": 1465588800000,
+      "homeGoals": null,
+      "awayGoals": null,
+      "predictions": [
+        887
+      ],
+      "group": {
+        "id": 927,
+        "matches": [
+          {
+            "id": 957,
+            "home": "Switzerland",
+            "away": "France",
+            "kickoff": 1466366400000,
+            "homeGoals": null,
+            "awayGoals": null,
+            "predictions": [
+              {
+                "id": 886,
+                "user": 969,
+                "match": 957,
+                "homeGoals": 0,
+                "awayGoals": 0
+              }
+            ],
+            "group": 927,
+            "stage": null
+          },
+          {
+            "id": 946,
+            "home": "Romania",
+            "away": "Switzerland",
+            "kickoff": 1466010000000,
+            "homeGoals": null,
+            "awayGoals": null,
+            "predictions": [
+              {
+                "id": 890,
+                "user": 969,
+                "match": 946,
+                "homeGoals": 0,
+                "awayGoals": 0
+              }
+            ],
+            "group": 927,
+            "stage": null
+          },
+          {
+            "id": 947,
+            "home": "France",
+            "away": "Albania",
+            "kickoff": 1466020800000,
+            "homeGoals": null,
+            "awayGoals": null,
+            "predictions": [
+              {
+                "id": 888,
+                "user": 969,
+                "match": 947,
+                "homeGoals": 0,
+                "awayGoals": 0
+              }
+            ],
+            "group": 927,
+            "stage": null
+          },
+          933,
+          {
+            "id": 958,
+            "home": "Romania",
+            "away": "Albania",
+            "kickoff": 1466366400000,
+            "homeGoals": null,
+            "awayGoals": null,
+            "predictions": [
+              {
+                "id": 891,
+                "user": 969,
+                "match": 958,
+                "homeGoals": 0,
+                "awayGoals": 0
+              }
+            ],
+            "group": 927,
+            "stage": null
+          },
+          {
+            "id": 934,
+            "home": "Albania",
+            "away": "Switzerland",
+            "kickoff": 1465653600000,
+            "homeGoals": null,
+            "awayGoals": null,
+            "predictions": [
+              {
+                "id": 889,
+                "user": 969,
+                "match": 934,
+                "homeGoals": 0,
+                "awayGoals": 0
+              }
+            ],
+            "group": 927,
+            "stage": null
+          }
+        ],
+        "groupName": "A",
+        "groupPredictions": [],
+        "standings": [
+          {
+            "team": "Albania",
+            "points": 0,
+            "played": 0
+          },
+          {
+            "team": "France",
+            "points": 0,
+            "played": 0
+          },
+          {
+            "team": "Romania",
+            "points": 0,
+            "played": 0
+          },
+          {
+            "team": "Switzerland",
+            "points": 0,
+            "played": 0
+          }
+        ]
+      },
+      "stage": null
+    },
+    "homeGoals": 0,
+    "awayGoals": 0
+  },
+  890,
+  886,
+  888,
+  889,
+  891
+]
