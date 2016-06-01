@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.neo4j.ogm.session.Session;
+import se.jelmstrom.sweepstake.Neo4jTestClient;
 import se.jelmstrom.sweepstake.application.NeoConfiguration;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthorizer;
@@ -35,7 +36,7 @@ public class LeagueResourceTest {
             "192.168.59.103:7474"
             , "local"
             , "neo4j");
-    private static final Neo4jClient neoClient = new Neo4jClient(config);
+    private static final Neo4jClient neoClient = new Neo4jTestClient(config);
     private static final UserRepository matchRepo = new UserRepository(neoClient);
 
     private static UserRepository userRepo = new UserRepository(neoClient);

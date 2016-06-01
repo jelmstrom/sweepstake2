@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import se.jelmstrom.sweepstake.Neo4jTestClient;
 import se.jelmstrom.sweepstake.application.NeoConfiguration;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthorizer;
@@ -39,7 +40,7 @@ public class MatchResourceTest {
             "192.168.59.103:7474"
             , "local"
             , "neo4j");
-    private static final Neo4jClient neoClient = new Neo4jClient(config);
+    private static final Neo4jClient neoClient = new Neo4jTestClient(config);
     private static final NeoMatchRepo matchRepo = new NeoMatchRepo(neoClient);
 
     private static UserRepository userRepo = new UserRepository(neoClient);
@@ -66,23 +67,60 @@ public class MatchResourceTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
+        neoClient.session().clear();
         neoClient.session().purgeDatabase();
+        neoClient.stop();
+    }
+
+    @Test
+    public void anUpdateWithoutIdUpdatesExisting() throws JsonProcessingException {
+        user = new User("test_user", "test_user@email.com", null, "aPassword");
+        Group g = repo.getGroup("A");
+        g.getMatches().forEach(match -> user.addPrediction(new MatchPrediction(null, user, match, 0, 1)));
+        userRepo.saveUser(user);
+        matchRepo.savePredictions(user);
+        Set<MatchPrediction> matchPredictions = matchRepo.predictionsFor(user);
+        assertThat(matchPredictions.size(), is(6));
+        matchPredictions.stream().forEach(item -> {
+            assertThat(item.getHomeGoals(), is(0));
+            assertThat(item.getAwayGoals(), is(1));
+
+        });
+
+        List<MatchPrediction> predictions = new ArrayList<>();
+        g.getMatches().forEach(match -> predictions.add(new MatchPrediction(null, user, match, 1, 0)));
+        user.getPredictions().addAll(predictions);
+        Entity<List<MatchPrediction>> json = Entity.json(predictions);
+
+        String mapper =  new ObjectMapper().writeValueAsString(predictions);
+        System.out.println(mapper);
+
+        Response res = resources.client().target("/match/predictions").request()
+                .header("Authorization", "Basic dGVzdF91c2VyOmFQYXNzd29yZA")
+                .post(json);
+        Object entity = res.getEntity();
+        assertThat(res.getStatus(), is(200));
+        Set<MatchPrediction> updatedPredictions = matchRepo.predictionsFor(user);
+        assertThat(updatedPredictions.size(), is(6));
+        updatedPredictions.stream().forEach(item -> {
+            assertThat(item.getHomeGoals(), is(1));
+            assertThat(item.getAwayGoals(), is(0));
+
+        });
     }
 
     @Test
     public void insertMatch(){
-        neoClient.session().purgeDatabase();
+        assertThat(matchRepo.list().size(), is(36));
         Match match = new Match(null, "Sweden", "Brazil", new Date(),1, 0, new Group("A", new HashSet<>()));
         matchRepo.create(match);
-        assertThat(matchRepo.list().size(), is(1));
+        assertThat(matchRepo.list().size(), is(37));
     }
 
 
     @Test
     public void matchWithPrediction(){
-
-        neoClient.session().purgeDatabase();
         User user = new User("user", "email", null, "");
         Group group1 = new Group("A", new HashSet<>());
         Match match = new Match(null, "Sweden", "Brazil", new Date(),1, 0, group1);
@@ -124,40 +162,5 @@ public class MatchResourceTest {
         assertThat(matchRepo.predictionsFor(user).size(), is(6));
     }
 
-    @Test
-    public void submitPredictsionsUpdatesExisting() throws JsonProcessingException {
-        user = new User("test_user", "test_user@email.com", null, "aPassword");
-        Group g = repo.getGroup("A");
-        g.getMatches().forEach(match -> user.addPrediction(new MatchPrediction(null, user, match, 0, 1)));
-        userRepo.saveUser(user);
-        matchRepo.savePredictions(user);
-        Set<MatchPrediction> matchPredictions = matchRepo.predictionsFor(user);
-        assertThat(matchPredictions.size(), is(6));
-        matchPredictions.stream().forEach(item -> {
-            assertThat(item.getHomeGoals(), is(0));
-            assertThat(item.getAwayGoals(), is(1));
 
-        });
-
-        List<MatchPrediction> predictions = new ArrayList<>();
-        g.getMatches().forEach(match -> predictions.add(new MatchPrediction(null, user, match, 1, 0)));
-        user.getPredictions().addAll(predictions);
-        Entity<List<MatchPrediction>> json = Entity.json(predictions);
-
-        String mapper =  new ObjectMapper().writeValueAsString(predictions);
-        System.out.println(mapper);
-
-        Response res = resources.client().target("/match/predictions").request()
-                .header("Authorization", "Basic dGVzdF91c2VyOmFQYXNzd29yZA")
-                .post(json);
-        Object entity = res.getEntity();
-        assertThat(res.getStatus(), is(200));
-        Set<MatchPrediction> updatedPredictions = matchRepo.predictionsFor(user);
-        assertThat(updatedPredictions.size(), is(6));
-        updatedPredictions.stream().forEach(item -> {
-            assertThat(item.getHomeGoals(), is(1));
-            assertThat(item.getAwayGoals(), is(0));
-
-        });
-    }
 }

@@ -17,15 +17,17 @@ import java.util.Date;
 public class Neo4jClient implements Managed {
 
     private final NeoConfiguration config;
-    private final SessionFactory sessionFactory;
+    protected final SessionFactory sessionFactory;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM, HH.mm, yyyy Z");
 
 
     public Neo4jClient(NeoConfiguration config) {
         this.config = config;
+        sessionFactory = buildSessionFactory(config);
+    }
 
+    protected SessionFactory buildSessionFactory(NeoConfiguration config) {
         Configuration neoConfig = new Configuration();
-        String credentials = "";
         String value = "http://" +
                 config.getUser()+
                 ":" +
@@ -34,8 +36,7 @@ public class Neo4jClient implements Managed {
                  +config.getLocation();
         neoConfig.set("URI", value);
         neoConfig.set("driver","org.neo4j.ogm.drivers.http.driver.HttpDriver");
-
-        sessionFactory = new SessionFactory(neoConfig, "se.jelmstrom.sweepstake.domain");
+        return new SessionFactory(neoConfig, "se.jelmstrom.sweepstake.domain");
     }
 
 
