@@ -23,8 +23,6 @@ group = 'se.jelmstrom.sweepstake'
 project.ext {
     dropwizardVersion = '0.9.2'
     serviceName = rootProject.name
-    zipTarget = "build/target/"
-    serviceRootPath = zipTarget + serviceName
     mainClass = 'se.jelmstrom.sweepstake.application.SweepstakeMain'
     prodPath = '.'
 }
@@ -51,20 +49,18 @@ jar {
 task copyJars(type: Copy) {
     dependsOn 'jar'
     from configurations.runtime {}
-    into serviceRootPath + '/dist/lib'
+    into 'target/lib'
 }
 
 task copyMainJar(type: Copy) {
     dependsOn 'copyJars'
     from jar.destinationDir
-    into serviceRootPath + '/dist'
+    into 'target/'
 }
 
 task dist(type: Tar) {
     println "Building dist for " + rootProject.name + " version " + version
     dependsOn 'copyMainJar', 'clean'
-    compression = Compression.GZIP
-    from zipTarget
 }
 
 task stage {
