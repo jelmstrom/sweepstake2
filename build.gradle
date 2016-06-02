@@ -67,6 +67,12 @@ task dist(type: Tar) {
     from zipTarget
 }
 
+task stage {
+    dependsOn dist
+}
+
+
+
 artifacts {
     archives dist
 }
