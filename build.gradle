@@ -9,6 +9,7 @@ plugins {
 
 //Project-wide properties
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 compileJava {
     options.encoding = 'UTF-8';
@@ -18,6 +19,10 @@ compileTestJava {
     options.encoding = 'UTF-8';
 }
 
+task cleanTarget (type: Delete){
+    delete 'target/'
+
+}
 group = 'se.jelmstrom.sweepstake'
 
 project.ext {
@@ -33,6 +38,7 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
+
 
 //Build executable jar if the mainClass attribute is set
 jar.doFirst {
@@ -62,10 +68,12 @@ task copyMainJar(type: Copy) {
 
 task dist(type: Tar) {
     println "Building dist for " + rootProject.name + " version " + version
-    dependsOn 'copyMainJar', 'clean'
+    dependsOn 'copyMainJar', 'clean', 'cleanTarget'
     compression = Compression.GZIP
     from zipTarget
 }
+
+
 
 task stage {
     dependsOn dist
