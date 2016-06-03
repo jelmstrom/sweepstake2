@@ -61,14 +61,14 @@
             console.log(user);
             main.makeAjaxCall('/rest/user/login', 'POST', user)
                     .done(function(response){
-                        console.log(user);
                         main.session.set("user", response);
                         main.session.set("password", user.password);
                         $("#tag-register").hide();
-                        console.log(response);
+                        LE.log("user logged in", response);
+
                         menu.userLoggedIn();
                     }).fail(function(response){
-                        console.log(response);
+                        LE.log("login failed for user", user.username);
                         //update an alert tag and pop it up?
                         //set an error label? <- probably neater..
             });
@@ -88,6 +88,7 @@
                     main.session.set("user", response);
                     main.session.set("password", user.password);
                     $("#tag-register").hide();
+                    LE.log("user registered", response);
                     menu.userLoggedIn();
                 }).fail(function(response){
                     console.log(response);

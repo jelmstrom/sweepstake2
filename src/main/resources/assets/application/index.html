@@ -12,6 +12,11 @@
     <script type="text/javascript" src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./node_modules/jquery-storage-api/jquery.storageapi.js"></script>
     <script type="text/javascript" src="js/jquery-dateFormat.js"></script>
+    <script type="text/javascript" src="js/logentries.js"></script>
+    <script>
+        // Set up le.js
+        LE.init('93e6cba6-b8b5-4b94-9d77-5d6d68007c9b');
+    </script>
 
 
     <link rel="stylesheet"        href="./node_modules/datatables.net-bs/css/dataTables.bootstrap.css" >
@@ -46,6 +51,7 @@
 
     $(document).ready(function() {
         main.hideAllTags();
+        LE.log("Page loaded");
     }); //document ready
 
 
