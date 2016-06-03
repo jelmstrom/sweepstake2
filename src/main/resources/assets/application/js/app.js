@@ -24,12 +24,12 @@ var main = {
     buildUrl : function(endpoint) {
         //if running from intellij
         var location=window.location.href
-        console.log(location);
-        if(location.indexOf('localhost:63342') ){
-            return  'http://localhost:8081'+endpoint
-        } else {
-            return endpoint;
+        var url = endpoint;
+        if(location.indexOf('localhost:63342') > 0 ){
+            url=   'http://localhost:8081'+endpoint
+            console.log("adding url");
         }
+        return url;
     },
 
     makeAjaxCall : function (url, type, data) {
