@@ -22,7 +22,10 @@ var main = {
     },
 
     buildUrl : function(endpoint) {
-        if(main.dev){
+        //if running from intellij
+        var location=window.location.href
+        console.log(location);
+        if(location.indexOf('localhost:63342') ){
             return  'http://localhost:8081'+endpoint
         } else {
             return endpoint;
@@ -81,6 +84,9 @@ var menu = {
         $("#menu-user").show();
         $("#p-user").text(main.session.get("user").username);
         $("#menu-register").hide();
+        user.drawLeagueTable();
+        user.showUserDetails();
+        $("#tag-user").show();
     },
     init : function(){
         console.log("menu init");
@@ -109,9 +115,7 @@ var menu = {
         $("#menu-details").on("click", function() {
             main.hideAllTags();
 
-            $("#userinfo-email").text(main.user().email);
-            $("#userinfo-isadmin").text(main.user().admin);
-            $("#userinfo-username").text(main.user().username);
+            user.showUserDetails();
             user.drawLeagueTable();
             $("#tag-user").show();
         });
@@ -141,12 +145,16 @@ var user = {
             "columns": [
                 {"data" : "id", visible : false},
                 {"data": "leagueName"},
-                {"data": null}
             ],
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                 return nRow;
             },
         });
+    },
+    showUserDetails : function(){
+        $("#userinfo-email").text(main.user().email);
+        $("#userinfo-isadmin").text(main.user().admin);
+        $("#userinfo-username").text(main.user().username);
     }
 };
 

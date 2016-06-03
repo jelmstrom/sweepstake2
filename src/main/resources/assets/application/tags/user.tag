@@ -127,14 +127,15 @@
                             user.drawLeagueTable();
                             $("#userinfo-join-name").val("");
                         }).fail(function (response) {
-                    console.log(response);
-                    $("#alert-fail  ").html("message...")
-                    $("#alert-fail").fadeTo(2000, 500).slideUp(500, function () {
-                        $("#alert-fail").alert('close');
-                    });
+                            console.log(response);
+                            $("#alert-fail").html(response.statusText)
+                            $("#alert-fail").fadeTo(2000, 500).slideUp(500, function () {
+                                $("#alert-fail").hide();
+                            });
                 });
             });
             user.drawLeagueTable();
+            user.showUserDetails();
             $('#userinfo-league-table tbody').on('click', 'tr', function () {
                 var data = $('#userinfo-league-table').DataTable().row( this ).data();
                 console.log(data);

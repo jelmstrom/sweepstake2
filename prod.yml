@@ -1,0 +1,18 @@
+server:
+  rootPath: /rest/*
+  requestLog:
+    appenders:
+    - type: console
+  applicationConnectors:
+    - type: http
+  adminConnectors:
+    - type: http
+      port: 8181
+corsLocations: http://vmtips.herokuapp.com
+neoConfiguration:
+  purge : false
+logging:
+  level: INFO
+  loggers:
+    "org.neo4j.ogm": ERROR
+    "se.jelmstrom": INFO

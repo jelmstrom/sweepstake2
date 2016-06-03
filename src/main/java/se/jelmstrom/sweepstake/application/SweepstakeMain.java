@@ -10,6 +10,8 @@ import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.config.DefaultJaxrsScanner;
 import io.swagger.jersey.listing.ApiListingResourceJSON;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.jelmstrom.sweepstake.application.authenticator.UserAuthenticator;
 import se.jelmstrom.sweepstake.group.GroupRepository;
 import se.jelmstrom.sweepstake.group.GroupResource;
@@ -31,6 +33,7 @@ import javax.servlet.FilterRegistration.Dynamic;
 import java.util.EnumSet;
 
 public class SweepstakeMain extends Application<SweepstakeConfiguration> {
+    private static final Logger log = LoggerFactory.getLogger(SweepstakeMain.class);
     @Override
     public void run(SweepstakeConfiguration config, Environment environment) throws Exception {
 
@@ -53,7 +56,8 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
 
         Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
-        filter.setInitParameter("allowedOrigins", "http://localhost:63342");
+        log.info("CORS: " + config.corsLocations);
+        filter.setInitParameter("allowedOrigins", config.corsLocations);
         filter.setInitParameter("allowedHeaders", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,Access-Control-Request-Method,Access-Control-Allow-Origin");
         filter.setInitParameter("allowedMethods", "GET,PUT,POST,DELETE,OPTIONS");
         filter.setInitParameter("preflightMaxAge", "5184000"); // 2 months
@@ -81,7 +85,7 @@ public class SweepstakeMain extends Application<SweepstakeConfiguration> {
 
     @Override
     public void initialize(Bootstrap<SweepstakeConfiguration> bootstrap) {
-        bootstrap.addBundle(new AssetsBundle("/assets/application", "/app", null, "app"));
+        bootstrap.addBundle(new AssetsBundle("/assets/application", "/", null, "app"));
         bootstrap.addBundle(new AssetsBundle("/assets/swagger", "/swagger", null, "swagger"));
         bootstrap.addBundle(new MultiPartBundle());
     }
